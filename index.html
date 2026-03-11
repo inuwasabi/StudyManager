@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0b1120" />
+  <title>ASM - Study Manager</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; height: 100dvh; }
+    body { background: #0b1120; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    select { appearance: none; -webkit-appearance: none; }
+    input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    ::-webkit-scrollbar { display: none; }
+    * { scrollbar-width: none; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.10.3/umd/Recharts.js"></script>
+  <script src="https://unpkg.com/lucide-react@0.383.0/dist/umd/lucide-react.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+
+  <script type="text/babel" data-presets="react" data-plugins="transform-react-jsx">
+    /* @jsxRuntime classic */
+    /* @jsx React.createElement */
+
+    const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+    const {
+      BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+      ResponsiveContainer, PieChart, Pie, Cell, Legend
+    } = Recharts;
+
+    const {
+      Home, Timer, PenLine, History, MoreHorizontal,
+      BarChart2, BookOpen, Settings, ChevronLeft,
+      Target, Play, Pause, RotateCcw, Flag,
+      Plus, Image, X, Check, AlertTriangle,
+      TrendingUp, Calendar, BookMarked, Layers,
+      ChevronRight, Palette
+    } = LucideReact;
+
+// ─── Google Fonts 注入 ───────────────────────────────────────
+const injectFont = () => {
+  if (document.getElementById("asm-font")) return;
+  const link = document.createElement("link");
+  link.id   = "asm-font";
+  link.rel  = "stylesheet";
+  link.href = "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap";
+  document.head.appendChild(link);
+};
+
+// ─── 定数 ────────────────────────────────────────────────────
+const FONT_EN = "'DM Sans', sans-serif";
+const FONT_JP = "'DM Sans','Noto Sans JP','Hiragino Sans',sans-serif";
+
+const C = {
+  bg:        "#0b1120",
+  bg2:       "#111827",
+  bg3:       "#1a2235",
+  surface:   "#1e2d45",
+  surfaceHi: "#263650",
+  border:    "#2a3d5a",
+  borderHi:  "#3a5270",
+  text:      "#e2e8f0",
+  textSub:   "#7a93b4",
+  textMuted: "#4a6080",
+  cyan:      "#22d3ee",
+  cyanDim:   "#0891b2",
+  cyanGlow:  "rgba(34,211,238,0.18)",
+  red:       "#f87171",
+  redDim:    "#991b1b",
+  redBg:     "rgba(248,113,113,0.1)",
+  green:     "#4ade80",
+  greenBg:   "rgba(74,222,128,0.1)",
+  amber:     "#fbbf24",
+};
+
+const DEFAULT_QUALIFICATIONS = [
+  { id: "q1", name: "簿記3級",    color: "#22d3ee", subjects: ["商業簿記"] },
+  { id: "q2", name: "簿記2級",    color: "#818cf8", subjects: ["商業簿記","工業簿記"] },
+  { id: "q3", name: "公認会計士", color: "#34d399", subjects: ["財務会計","管理会計","企業法","監査論","租税法"] },
+];
+const MATERIAL_TYPES = ["テキスト","問題集","過去問","答練","模試","その他"];
+const PALETTE = ["#22d3ee","#818cf8","#34d399","#f472b6","#fbbf24","#60a5fa","#a78bfa","#fb923c"];
+
+// ─── ユーティリティ ───────────────────────────────────────────
+const getToday     = () => new Date().toISOString().split("T")[0];
+const getWeekStart = () => {
+  const d = new Date();
+  d.setDate(d.getDate() - (d.getDay() === 0 ? 6 : d.getDay() - 1));
+  return d.toISOString().split("T")[0];
+};
+const fmtMin = m => { if (!m) return "0分"; const h = Math.floor(m/60), r = m%60; return h ? (r ? `${h}h${r}m` : `${h}h`) : `${r}m`; };
+const fmtSec = s => `${String(Math.floor(s/3600)).padStart(2,"0")}:${String(Math.floor((s%3600)/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+const loadData = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
+const saveData = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const fileToBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+
+// ─── 共通スタイル ─────────────────────────────────────────────
+const base = {
+  touchAction: "manipulation",
+  WebkitTapHighlightColor: "transparent",
+  fontFamily: FONT_JP,
+};
+const card = {
+  ...base,
+  background: C.surface,
+  border: `1px solid ${C.border}`,
+  borderRadius: "16px",
+  padding: "18px",
+  marginBottom: "12px",
+};
+const inputStyle = {
+  width: "100%", padding: "13px 14px",
+  background: C.bg3, border: `1.5px solid ${C.border}`,
+  borderRadius: "10px", fontSize: "16px",
+  color: C.text, fontFamily: FONT_JP,
+  outline: "none", boxSizing: "border-box",
+  WebkitAppearance: "none",
+};
+const btnPrimary = {
+  ...base, width: "100%", minHeight: "48px",
+  background: `linear-gradient(135deg, ${C.cyanDim}, ${C.cyan})`,
+  color: C.bg, border: "none", borderRadius: "12px",
+  padding: "14px 24px", fontSize: "15px", fontWeight: "700",
+  cursor: "pointer",
+  boxShadow: `0 0 20px ${C.cyanGlow}`,
+  display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+};
+const btnGhost = {
+  ...base, minHeight: "44px",
+  background: "transparent",
+  border: `1.5px solid ${C.border}`,
+  color: C.textSub, borderRadius: "10px",
+  padding: "11px 18px", fontSize: "14px", fontWeight: "600",
+  cursor: "pointer",
+};
+const btnDanger = {
+  ...base, minHeight: "36px",
+  background: C.redBg, color: C.red,
+  border: `1px solid ${C.redDim}`,
+  borderRadius: "8px", padding: "8px 14px",
+  fontSize: "13px", cursor: "pointer",
+};
+const labelStyle = {
+  display: "block", fontSize: "11px", fontWeight: "700",
+  color: C.textMuted, letterSpacing: "0.1em",
+  textTransform: "uppercase", marginBottom: "7px",
+};
+const successBox = { background: C.greenBg, border: `1px solid ${C.green}33`, borderRadius: "10px", padding: "12px 15px", fontSize: "14px", color: C.green, fontWeight: "600", marginBottom: "12px", fontFamily: FONT_JP };
+const errorBox   = { background: C.redBg,   border: `1px solid ${C.red}33`,   borderRadius: "10px", padding: "12px 15px", fontSize: "14px", color: C.red,   marginBottom: "12px", fontFamily: FONT_JP };
+const infoBox    = { background: C.cyanGlow, border: `1px solid ${C.cyan}33`,  borderRadius: "10px", padding: "12px 15px", fontSize: "14px", color: C.cyan,  marginBottom: "12px", fontFamily: FONT_JP };
+
+// ─── 共通コンポーネント ───────────────────────────────────────
+const Card = ({ icon: Icon, title, children, style, action, accentColor }) => (
+  <div style={{ ...card, ...style, ...(accentColor ? { borderLeft: `3px solid ${accentColor}` } : {}) }}>
+    {(Icon || title) && (
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px", paddingBottom: "12px", borderBottom: `1px solid ${C.border}` }}>
+        {Icon && <div style={{ color: accentColor || C.cyan }}><Icon size={18} strokeWidth={2} /></div>}
+        {title && <h2 style={{ fontSize: "14px", fontWeight: "700", color: C.text, margin: 0, fontFamily: FONT_JP, flex: 1 }}>{title}</h2>}
+        {action}
+      </div>
+    )}
+    {children}
+  </div>
+);
+
+const FG = ({ label, children, style }) => (
+  <div style={{ marginBottom: "14px", ...style }}>
+    <label style={labelStyle}>{label}</label>
+    {children}
+  </div>
+);
+
+const QBadge = ({ qual, size = "sm" }) => qual ? (
+  <span style={{
+    background: qual.color + "22", color: qual.color,
+    border: `1px solid ${qual.color}44`, borderRadius: "6px",
+    padding: size === "sm" ? "3px 9px" : "5px 13px",
+    fontSize: size === "sm" ? "11px" : "13px", fontWeight: "700",
+    display: "inline-block", whiteSpace: "nowrap", fontFamily: FONT_JP,
+  }}>{qual.name}</span>
+) : null;
+
+// ─── ボトムシート ─────────────────────────────────────────────
+const BottomSheet = ({ open, onClose, onNavigate }) => {
+  if (!open) return null;
+  const items = [
+    { id: "charts",    Icon: BarChart2,  label: "グラフ",   desc: "勉強時間の可視化" },
+    { id: "materials", Icon: BookMarked, label: "教材管理", desc: "教材の登録・一覧" },
+    { id: "settings",  Icon: Settings,   label: "資格設定", desc: "資格・科目の管理" },
+  ];
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 40, backdropFilter: "blur(4px)" }} />
+      <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, border: `1px solid ${C.border}`, borderRadius: "22px 22px 0 0", padding: `10px 0 calc(18px + env(safe-area-inset-bottom))`, zIndex: 50, boxShadow: `0 -8px 40px rgba(0,0,0,0.5)`, animation: "slideUp 0.22s cubic-bezier(0.32,0.72,0,1)" }}>
+        <div style={{ width: "36px", height: "4px", background: C.border, borderRadius: "99px", margin: "0 auto 18px" }} />
+        <div style={{ padding: "0 16px 10px", fontSize: "10px", fontWeight: "700", color: C.textMuted, letterSpacing: "0.12em" }}>MENU</div>
+        {items.map(({ id, Icon, label, desc }) => (
+          <button key={id} onClick={() => { onNavigate(id); onClose(); }} style={{ ...base, display: "flex", alignItems: "center", gap: "16px", width: "100%", padding: "15px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+            <div style={{ width: "44px", height: "44px", background: C.bg3, border: `1px solid ${C.border}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", color: C.cyan, flexShrink: 0 }}>
+              <Icon size={20} strokeWidth={1.5} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "16px", fontWeight: "700", color: C.text, fontFamily: FONT_JP }}>{label}</div>
+              <div style={{ fontSize: "12px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }}>{desc}</div>
+            </div>
+            <ChevronRight size={16} color={C.textMuted} />
+          </button>
+        ))}
+      </div>
+    </>
+  );
+};
+
+// ─── ダッシュボード ───────────────────────────────────────────
+const DashboardTab = ({ studyLogs, materials, qualifications, mainQualId, onSetMain }) => {
+  const today     = getToday();
+  const weekStart = getWeekStart();
+  const todayMin  = useMemo(() => studyLogs.filter(l => l.date === today).reduce((s, l) => s + l.minutes, 0), [studyLogs, today]);
+  const weekMin   = useMemo(() => studyLogs.filter(l => l.date >= weekStart).reduce((s, l) => s + l.minutes, 0), [studyLogs, weekStart]);
+  const totalMin  = useMemo(() => studyLogs.reduce((s, l) => s + l.minutes, 0), [studyLogs]);
+  const mainQual  = qualifications.find(q => q.id === mainQualId);
+  const todayLogs = useMemo(() => studyLogs.filter(l => l.date === today).slice(0, 8), [studyLogs, today]);
+
+  const StatCard = ({ label, value, Icon, color }) => (
+    <div style={{ background: C.bg3, border: `1px solid ${C.border}`, borderRadius: "14px", padding: "16px 14px", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: "-10px", right: "-10px", opacity: 0.07 }}>
+        <Icon size={64} strokeWidth={1} color={color} />
+      </div>
+      <div style={{ color, marginBottom: "8px" }}><Icon size={16} strokeWidth={2} /></div>
+      <div style={{ fontSize: "22px", fontWeight: "800", color: C.text, letterSpacing: "-0.03em", fontFamily: FONT_EN }}>{value}</div>
+      <div style={{ fontSize: "11px", color: C.textMuted, marginTop: "3px", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: FONT_EN }}>{label}</div>
+    </div>
+  );
+
+  return (
+    <div>
+      {/* メイン資格 */}
+      <Card icon={Target} title="メイン資格">
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: mainQual ? "12px" : 0 }}>
+          {qualifications.map(q => (
+            <button key={q.id} onClick={() => onSetMain(q.id)} style={{ ...base, padding: "9px 16px", borderRadius: "10px", fontSize: "13px", fontWeight: mainQualId === q.id ? "700" : "500", border: `1.5px solid ${mainQualId === q.id ? q.color : C.border}`, background: mainQualId === q.id ? q.color + "22" : "transparent", color: mainQualId === q.id ? q.color : C.textSub, minHeight: "40px", cursor: "pointer", fontFamily: FONT_JP }}>
+              {q.name}
+            </button>
+          ))}
+        </div>
+        {mainQual && (
+          <div style={{ ...infoBox, marginBottom: 0, borderColor: mainQual.color + "44", color: mainQual.color, background: mainQual.color + "18", borderLeft: `3px solid ${mainQual.color}` }}>
+            <strong>{mainQual.name}</strong> を集中勉強中！
+          </div>
+        )}
+      </Card>
+
+      {/* 統計カード */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+        <StatCard label="TODAY" value={fmtMin(todayMin)} Icon={Calendar} color={C.cyan} />
+        <StatCard label="THIS WEEK" value={fmtMin(weekMin)} Icon={TrendingUp} color="#818cf8" />
+      </div>
+      <div style={{ background: `linear-gradient(135deg, ${C.cyanDim}33, ${C.cyan}22)`, border: `1px solid ${C.cyan}33`, borderRadius: "14px", padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+        <div>
+          <div style={{ fontSize: "10px", color: C.cyan, fontWeight: "700", letterSpacing: "0.12em", fontFamily: FONT_EN, marginBottom: "4px" }}>TOTAL</div>
+          <div style={{ fontSize: "30px", fontWeight: "800", color: C.text, letterSpacing: "-0.03em", fontFamily: FONT_EN }}>{fmtMin(totalMin)}</div>
+          <div style={{ fontSize: "12px", color: C.textSub, marginTop: "3px", fontFamily: FONT_JP }}>{studyLogs.length}件の記録</div>
+        </div>
+        <Layers size={40} color={C.cyan} strokeWidth={1} style={{ opacity: 0.3 }} />
+      </div>
+
+      {/* 今日の記録 */}
+      <Card icon={PenLine} title="今日の記録">
+        {todayLogs.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "28px 0", color: C.textMuted, fontSize: "14px", fontFamily: FONT_JP }}>今日はまだ記録がありません</div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {todayLogs.map(log => {
+              const mat = materials.find(m => m.id === log.materialId);
+              const q   = mat ? qualifications.find(q => q.id === mat.qualId) : null;
+              return (
+                <div key={log.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", background: C.bg3, borderRadius: "10px", border: `1px solid ${C.border}` }}>
+                  {mat?.imageBase64
+                    ? <img src={mat.imageBase64} alt="" style={{ width: "36px", height: "36px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 }} />
+                    : <div style={{ width: "36px", height: "36px", background: q ? q.color+"22" : C.surface, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><BookOpen size={16} color={q?.color || C.textMuted} /></div>
+                  }
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: "700", fontSize: "13px", color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: FONT_JP }}>{mat?.name || "—"}</div>
+                    <div style={{ fontSize: "11px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }}>{log.content || mat?.subject || "—"}</div>
+                  </div>
+                  <div style={{ fontWeight: "800", fontSize: "14px", color: C.cyan, flexShrink: 0, fontFamily: FONT_EN }}>{fmtMin(log.minutes)}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+// ─── タイマー ────────────────────────────────────────────────
+const TimerTab = ({ qualifications, materials, onLogFromTimer }) => {
+  const [swSec,     setSwSec]     = useState(0);
+  const [swRunning, setSwRunning] = useState(false);
+  const [swLaps,    setSwLaps]    = useState([]);
+  const swRef = useRef(null);
+  const [timerInput,   setTimerInput]   = useState({ h: "0", m: "25", s: "0" });
+  const [timerSec,     setTimerSec]     = useState(0);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [timerDone,    setTimerDone]    = useState(false);
+  const timerRef = useRef(null);
+  const [saveForm, setSaveForm] = useState({ materialId: "", content: "" });
+  const [saveMsg,  setSaveMsg]  = useState("");
+  const [mode, setMode] = useState("sw");
+
+  const swStart = () => { if (swRunning) return; setSwRunning(true); swRef.current = setInterval(() => setSwSec(s => s+1), 1000); };
+  const swStop  = () => { setSwRunning(false); clearInterval(swRef.current); };
+  const swReset = () => { swStop(); setSwSec(0); setSwLaps([]); };
+  const swLap   = () => { if (swRunning) setSwLaps(p => [...p, swSec]); };
+  const timerSet = () => {
+    const t = (parseInt(timerInput.h)||0)*3600 + (parseInt(timerInput.m)||0)*60 + (parseInt(timerInput.s)||0);
+    if (!t) return;
+    setTimerSec(t); setTimerDone(false); clearInterval(timerRef.current); setTimerRunning(false);
+  };
+  const timerStart = () => {
+    if (timerRunning || timerSec<=0) return; setTimerRunning(true); setTimerDone(false);
+    timerRef.current = setInterval(() => setTimerSec(s => { if (s<=1) { clearInterval(timerRef.current); setTimerRunning(false); setTimerDone(true); return 0; } return s-1; }), 1000);
+  };
+  const timerStop  = () => { setTimerRunning(false); clearInterval(timerRef.current); };
+  const timerReset = () => { timerStop(); setTimerSec(0); setTimerDone(false); };
+  useEffect(() => () => { clearInterval(swRef.current); clearInterval(timerRef.current); }, []);
+
+  const timerTotal    = (parseInt(timerInput.h)||0)*3600 + (parseInt(timerInput.m)||0)*60 + (parseInt(timerInput.s)||0);
+  const timerProgress = timerTotal > 0 ? (timerTotal - timerSec) / timerTotal : 0;
+
+  const handleSaveLog = () => {
+    if (!saveForm.materialId) { setSaveMsg("err:教材を選んでください"); return; }
+    if (swSec < 60)           { setSaveMsg("err:1分以上計測してから保存してください"); return; }
+    onLogFromTimer({ id: Date.now(), date: getToday(), materialId: Number(saveForm.materialId), content: saveForm.content || "ストップウォッチで計測", minutes: Math.round(swSec/60) });
+    setSaveMsg("ok:記録しました！"); swReset(); setTimeout(() => setSaveMsg(""), 3000);
+  };
+
+  const ModeBtn = ({ id, label }) => (
+    <button onClick={() => setMode(id)} style={{ ...base, flex: 1, padding: "11px", border: "none", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: mode===id ? "700" : "500", background: mode===id ? C.cyan : "transparent", color: mode===id ? C.bg : C.textSub, fontFamily: FONT_JP, transition: "all 0.18s" }}>{label}</button>
+  );
+
+  return (
+    <div>
+      {/* モード切替 */}
+      <div style={{ display: "flex", background: C.bg3, borderRadius: "14px", padding: "4px", marginBottom: "12px", border: `1px solid ${C.border}` }}>
+        <ModeBtn id="sw"    label="ストップウォッチ" />
+        <ModeBtn id="timer" label="タイマー" />
+      </div>
+
+      {/* ─ ストップウォッチ ─ */}
+      {mode === "sw" && (
+        <div style={{ ...card }}>
+          {/* 時間表示 */}
+          <div style={{ textAlign: "center", padding: "16px 0 8px" }}>
+            <div style={{ fontSize: "clamp(60px,18vw,88px)", fontWeight: "800", letterSpacing: "-0.05em", fontFamily: FONT_EN, lineHeight: 1, color: swRunning ? C.cyan : C.text, transition: "color 0.3s", textShadow: swRunning ? `0 0 40px ${C.cyanGlow}` : "none" }}>
+              {fmtSec(swSec)}
+            </div>
+            {swRunning && (
+              <div style={{ display: "flex", justifyContent: "center", gap: "5px", marginTop: "14px" }}>
+                {[0,1,2].map(i => <div key={i} style={{ width: "7px", height: "7px", borderRadius: "50%", background: C.cyan, animation: `asmPulse 1.2s ease-in-out ${i*0.3}s infinite` }} />)}
+              </div>
+            )}
+          </div>
+          {/* ボタン */}
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "8px", marginTop: "20px" }}>
+            <button onClick={swRunning ? swStop : swStart} style={{ ...btnPrimary, background: swRunning ? `linear-gradient(135deg,#991b1b,${C.red})` : btnPrimary.background, boxShadow: swRunning ? "0 0 20px rgba(248,113,113,0.2)" : btnPrimary.boxShadow }}>
+              {swRunning ? <><Pause size={18} strokeWidth={2.5} /> 停止</> : <><Play size={18} strokeWidth={2.5} fill="currentColor" /> {swSec > 0 ? "再開" : "START"}</>}
+            </button>
+            <button onClick={swLap} disabled={!swRunning} style={{ ...btnGhost, opacity: swRunning ? 1 : 0.4, display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+              <Flag size={16} strokeWidth={2} />
+            </button>
+            <button onClick={swReset} style={{ ...btnGhost, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <RotateCcw size={16} strokeWidth={2} />
+            </button>
+          </div>
+          {/* ラップ */}
+          {swLaps.length > 0 && (
+            <div style={{ background: C.bg3, border: `1px solid ${C.border}`, borderRadius: "10px", padding: "10px", maxHeight: "150px", overflowY: "auto", marginTop: "14px" }}>
+              {swLaps.map((lap, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 4px", borderBottom: `1px solid ${C.border}`, fontSize: "13px" }}>
+                  <span style={{ color: C.textMuted, fontFamily: FONT_EN }}>Lap {i+1}</span>
+                  <span style={{ fontWeight: "700", color: C.text, fontFamily: FONT_EN }}>{fmtSec(lap)}</span>
+                  <span style={{ color: C.textMuted, fontFamily: FONT_EN }}>+{fmtSec(lap - (i>0 ? swLaps[i-1] : 0))}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* 記録保存 */}
+          <div style={{ borderTop: `1px solid ${C.border}`, marginTop: "18px", paddingTop: "16px" }}>
+            <p style={{ fontSize: "12px", fontWeight: "700", color: C.textMuted, letterSpacing: "0.08em", marginBottom: "12px", fontFamily: FONT_JP, textTransform: "uppercase" }}>計測した時間を記録に保存</p>
+            {saveMsg && <div style={saveMsg.startsWith("err") ? errorBox : successBox}>{saveMsg.slice(3)}</div>}
+            <FG label="教材">
+              <select style={inputStyle} value={saveForm.materialId} onChange={e => setSaveForm(p => ({ ...p, materialId: e.target.value }))}>
+                <option value="">教材を選択してください</option>
+                {qualifications.map(q => { const mats = materials.filter(m => m.qualId === q.id); if (!mats.length) return null; return <optgroup key={q.id} label={`── ${q.name} ──`}>{mats.map(m => <option key={m.id} value={m.id}>{m.subject} / {m.name}</option>)}</optgroup>; })}
+              </select>
+            </FG>
+            <FG label="勉強内容（任意）">
+              <input style={inputStyle} placeholder="例: 第3章" value={saveForm.content} onChange={e => setSaveForm(p => ({ ...p, content: e.target.value }))} />
+            </FG>
+            <button style={btnPrimary} onClick={handleSaveLog}>
+              <Check size={16} strokeWidth={2.5} /> 記録に保存（{Math.round(swSec/60)}分）
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ─ カウントダウンタイマー ─ */}
+      {mode === "timer" && (
+        <div style={{ ...card }}>
+          {timerDone && (
+            <div style={{ background: C.amber+"22", border: `1px solid ${C.amber}44`, borderRadius: "12px", padding: "16px", textAlign: "center", fontSize: "16px", fontWeight: "700", color: C.amber, marginBottom: "16px", fontFamily: FONT_JP }}>
+              時間になりました！お疲れ様でした！
+            </div>
+          )}
+          {/* クイックセット */}
+          <p style={{ ...labelStyle, marginBottom: "10px" }}>QUICK SET</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px", marginBottom: "18px" }}>
+            {[5,10,25,30,45,60].map(min => (
+              <button key={min} onClick={() => { setTimerInput({ h:"0", m:String(min), s:"0" }); setTimerSec(min*60); setTimerDone(false); clearInterval(timerRef.current); setTimerRunning(false); }}
+                style={{ ...btnGhost, padding: "12px", fontSize: "14px", fontWeight: "700", fontFamily: FONT_EN }}>{min}<span style={{ fontSize: "11px", fontFamily: FONT_JP, fontWeight: "500" }}>分</span>
+              </button>
+            ))}
+          </div>
+
+          {timerSec > 0 ? (
+            <>
+              <div style={{ textAlign: "center", margin: "8px 0 14px" }}>
+                <div style={{ fontSize: "clamp(56px,16vw,80px)", fontWeight: "800", letterSpacing: "-0.05em", fontFamily: FONT_EN, lineHeight: 1, color: timerDone ? C.amber : timerRunning ? C.cyan : C.text, transition: "color 0.3s", textShadow: timerRunning ? `0 0 40px ${C.cyanGlow}` : "none" }}>
+                  {fmtSec(timerSec)}
+                </div>
+              </div>
+              {/* 円形プログレス */}
+              <div style={{ position: "relative", width: "120px", margin: "0 auto 16px" }}>
+                <svg width="120" height="8" style={{ display: "block" }}>
+                  <rect x="0" y="0" width="120" height="8" rx="4" fill={C.bg3} />
+                  <rect x="0" y="0" width={`${timerProgress * 120}`} height="8" rx="4" fill={timerDone ? C.amber : C.cyan} style={{ transition: "width 1s linear" }} />
+                </svg>
+                <div style={{ textAlign: "center", fontSize: "11px", color: C.textMuted, marginTop: "6px", fontFamily: FONT_EN }}>{Math.round(timerProgress*100)}% elapsed</div>
+              </div>
+            </>
+          ) : (
+            <div style={{ display: "flex", gap: "8px", justifyContent: "center", marginBottom: "18px" }}>
+              {[{ key:"h", label:"時" }, { key:"m", label:"分" }, { key:"s", label:"秒" }].map(({ key, label }) => (
+                <div key={key} style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "11px", color: C.textMuted, marginBottom: "4px", fontFamily: FONT_JP }}>{label}</div>
+                  <input type="number" min="0" max="99" style={{ ...inputStyle, width: "68px", textAlign: "center", fontSize: "22px", fontWeight: "800", padding: "10px 4px", fontFamily: FONT_EN }} value={timerInput[key]} onChange={e => setTimerInput(p => ({ ...p, [key]: e.target.value }))} />
+                </div>
+              ))}
+              <div style={{ alignSelf: "flex-end" }}>
+                <button style={{ ...btnGhost, padding: "13px 16px", fontFamily: FONT_JP }} onClick={timerSet}>セット</button>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "8px" }}>
+            <button style={{ ...btnPrimary, opacity: timerSec===0 ? 0.4 : 1 }} onClick={timerRunning ? timerStop : timerStart} disabled={timerSec===0}>
+              {timerRunning ? <><Pause size={16} strokeWidth={2.5} /> 停止</> : <><Play size={16} strokeWidth={2.5} fill="currentColor" /> スタート</>}
+            </button>
+            <button style={{ ...btnGhost, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={timerReset}>
+              <RotateCcw size={16} strokeWidth={2} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes asmPulse{0%,100%{transform:scale(0.75);opacity:0.3}50%{transform:scale(1.2);opacity:1}}
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        select option { background: #1e2d45; color: #e2e8f0; }
+        input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        input::placeholder { color: #4a6080; }
+        select { color: #e2e8f0; }
+      `}</style>
+    </div>
+  );
+};
+
+// ─── 勉強を記録する ───────────────────────────────────────────
+const RecordTab = ({ materials, qualifications, onAdd }) => {
+  const [form, setForm] = useState({ date: getToday(), materialId: "", content: "", minutes: "" });
+  const [msg,  setMsg]  = useState({ type: "", text: "" });
+
+  const handleSubmit = () => {
+    if (!form.materialId)                    { setMsg({ type: "error", text: "教材を選択してください" }); return; }
+    if (!form.minutes || +form.minutes <= 0) { setMsg({ type: "error", text: "勉強時間を入力してください" }); return; }
+    onAdd({ id: Date.now(), ...form, materialId: Number(form.materialId), minutes: Number(form.minutes) });
+    setForm(p => ({ ...p, content: "", minutes: "" }));
+    setMsg({ type: "success", text: "記録しました！お疲れ様でした！" });
+    setTimeout(() => setMsg({ type: "", text: "" }), 3000);
+  };
+
+  const selectedMat = materials.find(m => m.id === Number(form.materialId));
+  const selectedQ   = selectedMat ? qualifications.find(q => q.id === selectedMat.qualId) : null;
+
+  return (
+    <div style={{ ...card }}>
+      {materials.length === 0 && <div style={infoBox}>先に「教材管理」で教材を登録してください（メニューから）</div>}
+      {msg.text && <div style={msg.type === "error" ? errorBox : successBox}>{msg.text}</div>}
+
+      <FG label="日付">
+        <input type="date" style={inputStyle} value={form.date} onChange={e => setForm(p => ({ ...p, date: e.target.value }))} />
+      </FG>
+      <FG label="教材">
+        <select style={inputStyle} value={form.materialId} onChange={e => setForm(p => ({ ...p, materialId: e.target.value }))}>
+          <option value="">教材を選択してください</option>
+          {qualifications.map(q => { const mats = materials.filter(m => m.qualId === q.id); if (!mats.length) return null; return <optgroup key={q.id} label={`── ${q.name} ──`}>{mats.map(m => <option key={m.id} value={m.id}>{m.subject} / {m.name}</option>)}</optgroup>; })}
+        </select>
+      </FG>
+
+      {selectedMat && (
+        <div style={{ ...infoBox, display: "flex", gap: "10px", alignItems: "center", borderColor: selectedQ?.color+"44" || C.cyan+"44", color: C.text, background: selectedQ ? selectedQ.color+"18" : C.cyanGlow }}>
+          {selectedMat.imageBase64 && <img src={selectedMat.imageBase64} alt="" style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 }} />}
+          <div><div style={{ fontWeight: "700", fontFamily: FONT_JP }}>{selectedMat.name}</div>{selectedQ && <QBadge qual={selectedQ} />}</div>
+        </div>
+      )}
+
+      <FG label="勉強内容（任意）">
+        <input style={inputStyle} placeholder="例: 第3章 仕訳の基礎" value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} />
+      </FG>
+      <FG label="時間（分）">
+        <input type="number" min="1" style={{ ...inputStyle, fontSize: "24px", fontWeight: "800", textAlign: "center", fontFamily: FONT_EN }} placeholder="60" value={form.minutes} onChange={e => setForm(p => ({ ...p, minutes: e.target.value }))} />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: "6px", marginTop: "8px" }}>
+          {[15,30,45,60,90,120].map(min => (
+            <button key={min} onClick={() => setForm(p => ({ ...p, minutes: String(min) }))} style={{ ...btnGhost, padding: "8px 4px", fontSize: "13px", minHeight: "36px", fontFamily: FONT_EN, fontWeight: "700" }}>{min}</button>
+          ))}
+        </div>
+      </FG>
+
+      <button style={{ ...btnPrimary, opacity: materials.length === 0 ? 0.4 : 1 }} onClick={handleSubmit} disabled={materials.length === 0}>
+        <Plus size={18} strokeWidth={2.5} /> 記録する
+      </button>
+    </div>
+  );
+};
+
+// ─── 勉強履歴 ────────────────────────────────────────────────
+const HistoryTab = ({ studyLogs, materials, qualifications, onDelete }) => {
+  const [filterQualId, setFilterQualId] = useState("");
+  const [deleteId,     setDeleteId]     = useState(null);
+
+  const filtered = useMemo(() => {
+    if (!filterQualId) return studyLogs;
+    return studyLogs.filter(l => materials.find(m => m.id === l.materialId)?.qualId === filterQualId);
+  }, [studyLogs, materials, filterQualId]);
+
+  return (
+    <div>
+      <div style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px", marginBottom: "12px", WebkitOverflowScrolling: "touch" }}>
+        {[{ id: "", label: `すべて (${studyLogs.length})`, color: C.cyan }, ...qualifications.map(q => ({ id: q.id, label: `${q.name} (${studyLogs.filter(l => materials.find(m => m.id === l.materialId)?.qualId === q.id).length})`, color: q.color }))].map(f => (
+          <button key={f.id} onClick={() => setFilterQualId(f.id)} style={{ ...base, whiteSpace: "nowrap", fontSize: "12px", padding: "8px 14px", minHeight: "36px", borderRadius: "8px", cursor: "pointer", border: `1.5px solid ${filterQualId === f.id ? f.color : C.border}`, background: filterQualId === f.id ? f.color+"22" : "transparent", color: filterQualId === f.id ? f.color : C.textMuted, fontWeight: filterQualId === f.id ? "700" : "500", flexShrink: 0, fontFamily: FONT_JP }}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div style={{ ...card, textAlign: "center", padding: "32px 0", color: C.textMuted, fontFamily: FONT_JP }}>記録がありません</div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {filtered.map(log => {
+            const mat = materials.find(m => m.id === log.materialId);
+            const q   = mat ? qualifications.find(q => q.id === mat.qualId) : null;
+            return (
+              <div key={log.id} style={{ ...card, padding: "14px 16px", marginBottom: 0 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+                  {mat?.imageBase64
+                    ? <img src={mat.imageBase64} alt="" style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 }} />
+                    : <div style={{ width: "42px", height: "42px", background: q ? q.color+"22" : C.bg3, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><BookOpen size={18} color={q?.color || C.textMuted} /></div>
+                  }
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+                      <div>
+                        <div style={{ fontWeight: "700", fontSize: "14px", color: C.text, fontFamily: FONT_JP }}>{mat?.name || "—"}</div>
+                        <div style={{ fontSize: "12px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }}>{log.date} · {log.content || mat?.subject || "—"}</div>
+                      </div>
+                      <div style={{ fontWeight: "800", fontSize: "15px", color: C.cyan, flexShrink: 0, fontFamily: FONT_EN }}>{fmtMin(log.minutes)}</div>
+                    </div>
+                    {q && <div style={{ marginTop: "6px" }}><QBadge qual={q} /></div>}
+                  </div>
+                </div>
+                {deleteId === log.id ? (
+                  <div style={{ marginTop: "10px", background: C.redBg, borderRadius: "10px", padding: "10px 12px", border: `1px solid ${C.red}33` }}>
+                    <div style={{ fontSize: "13px", color: C.red, fontWeight: "700", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px", fontFamily: FONT_JP }}><AlertTriangle size={14} />この記録を削除しますか？元に戻せません。</div>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button style={{ ...btnDanger, minHeight: "38px", width: "auto", padding: "8px 20px", fontWeight: "700", fontFamily: FONT_JP }} onClick={() => { onDelete(log.id); setDeleteId(null); }}>削除する</button>
+                      <button style={{ ...btnGhost, minHeight: "38px", width: "auto", padding: "8px 16px", fontSize: "13px", fontFamily: FONT_JP }} onClick={() => setDeleteId(null)}>キャンセル</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button style={{ ...btnDanger, marginTop: "8px", fontSize: "12px", minHeight: "32px", fontFamily: FONT_JP }} onClick={() => setDeleteId(log.id)}>削除</button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── グラフ ──────────────────────────────────────────────────
+const ChartsTab = ({ studyLogs, materials, qualifications }) => {
+  const noData = <div style={{ textAlign: "center", padding: "36px 0", color: C.textMuted, fontSize: "14px", fontFamily: FONT_JP }}>データがありません</div>;
+  const Tip = ({ active, payload, label }) => active && payload?.length ? (
+    <div style={{ background: C.bg2, border: `1px solid ${C.border}`, borderRadius: "8px", padding: "9px 13px", fontSize: "13px", boxShadow: "0 4px 20px rgba(0,0,0,0.4)", fontFamily: FONT_JP }}>
+      <div style={{ fontWeight: "700", color: C.cyan, marginBottom: "3px" }}>{label}</div>
+      <div style={{ color: C.text }}>{fmtMin(payload[0].value)}</div>
+    </div>
+  ) : null;
+
+  const qualData    = useMemo(() => qualifications.map(q => ({ name: q.name, color: q.color, 勉強時間: studyLogs.filter(l => materials.find(m => m.id === l.materialId)?.qualId === q.id).reduce((s, l) => s + l.minutes, 0) })).filter(d => d.勉強時間 > 0), [studyLogs, materials, qualifications]);
+  const subjectData = useMemo(() => { const map = {}; studyLogs.forEach(l => { const mat = materials.find(m => m.id === l.materialId); if (mat) map[mat.subject] = (map[mat.subject]||0) + l.minutes; }); return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a,b) => b.value-a.value); }, [studyLogs, materials]);
+  const monthlyData = useMemo(() => { const map = {}; studyLogs.forEach(l => { const m = l.date.slice(0,7); map[m] = (map[m]||0) + l.minutes; }); return Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])).slice(-6).map(([k,v]) => ({ name: k.slice(5)+"月", 勉強時間: v })); }, [studyLogs]);
+
+  const tickStyle = { fontSize: 11, fill: C.textMuted, fontFamily: FONT_EN };
+
+  return (
+    <div>
+      <Card icon={BarChart2} title="資格レベル別 勉強時間">
+        {qualData.length === 0 ? noData : (
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={qualData} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+              <XAxis dataKey="name" tick={{ ...tickStyle, fontFamily: FONT_JP }} />
+              <YAxis tick={tickStyle} />
+              <Tooltip content={<Tip />} />
+              <Bar dataKey="勉強時間" radius={[6,6,0,0]}>{qualData.map(d => <Cell key={d.name} fill={d.color} />)}</Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+      <Card icon={Calendar} title="月別 勉強時間（直近6ヶ月）">
+        {monthlyData.length === 0 ? noData : (
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={monthlyData} margin={{ top: 5, right: 5, left: -15, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+              <XAxis dataKey="name" tick={{ ...tickStyle, fontFamily: FONT_JP }} />
+              <YAxis tick={tickStyle} />
+              <Tooltip content={<Tip />} />
+              <Bar dataKey="勉強時間" fill={C.cyan} radius={[6,6,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+      <Card icon={Layers} title="科目別 割合">
+        {subjectData.length === 0 ? noData : (
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie data={subjectData} cx="50%" cy="48%" outerRadius={80} dataKey="value" label={({ percent }) => percent > 0.08 ? `${(percent*100).toFixed(0)}%` : ""} labelLine={false}>
+                {subjectData.map((_, i) => <Cell key={i} fill={PALETTE[i%PALETTE.length]} />)}
+              </Pie>
+              <Tooltip formatter={v => [fmtMin(v), "勉強時間"]} contentStyle={{ background: C.bg2, border: `1px solid ${C.border}`, borderRadius: "8px", fontFamily: FONT_JP }} />
+              <Legend formatter={v => <span style={{ fontSize: "12px", fontFamily: FONT_JP, color: C.textSub }}>{v}</span>} />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+// ─── 教材管理 ────────────────────────────────────────────────
+const MaterialsTab = ({ materials, qualifications, onAdd, onDelete }) => {
+  const [form,        setForm]      = useState({ qualId: "", subject: "", type: "テキスト", name: "", imageBase64: "" });
+  const [msg,         setMsg]       = useState({ type: "", text: "" });
+  const [imgPreview,  setImgPv]     = useState("");
+  const [showForm,    setShowForm]  = useState(false);
+  const [deleteMatId, setDeleteMatId] = useState(null);
+  const fileRef = useRef(null);
+
+  useEffect(() => { if (qualifications.length > 0 && !form.qualId) setForm(p => ({ ...p, qualId: qualifications[0].id, subject: qualifications[0].subjects[0] || "" })); }, [qualifications]);
+  const handleQualChange = qualId => { const q = qualifications.find(q => q.id === qualId); setForm(p => ({ ...p, qualId, subject: q?.subjects[0] || "" })); };
+  const handleImage = async e => {
+    const file = e.target.files[0]; if (!file) return;
+    if (file.size > 500*1024) { setMsg({ type: "error", text: "画像は500KB以下にしてください" }); return; }
+    try { const b64 = await fileToBase64(file); setForm(p => ({ ...p, imageBase64: b64 })); setImgPv(b64); }
+    catch { setMsg({ type: "error", text: "画像の読み込みに失敗しました" }); }
+  };
+  const handleSubmit = () => {
+    if (!form.name.trim())    { setMsg({ type: "error", text: "教材名を入力してください" }); return; }
+    if (!form.qualId)         { setMsg({ type: "error", text: "資格レベルを選択してください" }); return; }
+    if (!form.subject.trim()) { setMsg({ type: "error", text: "科目を選択してください" }); return; }
+    onAdd({ id: Date.now(), ...form, name: form.name.trim(), createdAt: getToday() });
+    setForm(p => ({ ...p, name: "", imageBase64: "" })); setImgPv(""); setMsg({ type: "success", text: "教材を登録しました！" }); setShowForm(false);
+    setTimeout(() => setMsg({ type: "", text: "" }), 3000);
+  };
+  const selectedQual = qualifications.find(q => q.id === form.qualId);
+
+  return (
+    <div>
+      {msg.text && <div style={msg.type==="error" ? errorBox : successBox}>{msg.text}</div>}
+
+      <button onClick={() => setShowForm(p => !p)} style={{ ...btnPrimary, marginBottom: "12px" }}>
+        {showForm ? <><X size={16} strokeWidth={2.5} /> フォームを閉じる</> : <><Plus size={16} strokeWidth={2.5} /> 新しい教材を登録する</>}
+      </button>
+
+      {showForm && (
+        <div style={{ ...card, marginBottom: "12px" }}>
+          <FG label="資格レベル"><select style={inputStyle} value={form.qualId} onChange={e => handleQualChange(e.target.value)}>{qualifications.map(q => <option key={q.id} value={q.id}>{q.name}</option>)}</select></FG>
+          <FG label="科目"><select style={inputStyle} value={form.subject} onChange={e => setForm(p => ({ ...p, subject: e.target.value }))}>{selectedQual?.subjects.map(s => <option key={s}>{s}</option>)}</select></FG>
+          <FG label="教材の種類"><select style={inputStyle} value={form.type} onChange={e => setForm(p => ({ ...p, type: e.target.value }))}>{MATERIAL_TYPES.map(t => <option key={t}>{t}</option>)}</select></FG>
+          <FG label="教材名"><input style={inputStyle} placeholder="例: TAC 簿記3級テキスト" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} /></FG>
+          <FG label="教材の画像（任意 · 500KB以下）">
+            <div onClick={() => fileRef.current?.click()} style={{ border: `2px dashed ${C.borderHi}`, borderRadius: "12px", padding: "16px", cursor: "pointer", background: C.bg3, display: "flex", alignItems: "center", gap: "14px", touchAction: "manipulation" }}>
+              {imgPreview
+                ? <><img src={imgPreview} alt="プレビュー" style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" }} /><span style={{ fontSize: "13px", color: C.textSub, fontFamily: FONT_JP }}>タップして変更</span></>
+                : <div style={{ color: C.textMuted, fontSize: "14px", width: "100%", textAlign: "center", fontFamily: FONT_JP }}><Image size={28} style={{ margin: "0 auto 6px" }} color={C.textMuted} /><br/>タップして画像を選択</div>
+              }
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImage} />
+          </FG>
+          <button style={btnPrimary} onClick={handleSubmit}><Check size={16} strokeWidth={2.5} /> 登録する</button>
+        </div>
+      )}
+
+      <p style={{ ...labelStyle, marginBottom: "8px" }}>登録済み教材 · {materials.length}件</p>
+      {materials.length === 0
+        ? <div style={{ ...card, textAlign: "center", padding: "28px 0", color: C.textMuted, fontFamily: FONT_JP }}>教材がまだ登録されていません</div>
+        : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {materials.map(m => {
+              const q = qualifications.find(q => q.id === m.qualId);
+              return (
+                <div key={m.id} style={{ ...card, padding: "14px", marginBottom: 0, display: "flex", gap: "12px", alignItems: "center" }}>
+                  {m.imageBase64
+                    ? <img src={m.imageBase64} alt={m.name} style={{ width: "52px", height: "52px", objectFit: "cover", borderRadius: "10px", flexShrink: 0 }} />
+                    : <div style={{ width: "52px", height: "52px", background: q ? q.color+"22" : C.bg3, borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `1px solid ${q ? q.color+"33" : C.border}` }}><BookOpen size={20} color={q?.color || C.textMuted} strokeWidth={1.5} /></div>
+                  }
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: "700", fontSize: "14px", color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: FONT_JP }}>{m.name}</div>
+                    <div style={{ fontSize: "12px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }}>{m.subject} · {m.type}</div>
+                    {q && <div style={{ marginTop: "5px" }}><QBadge qual={q} /></div>}
+                  </div>
+                  {deleteMatId === m.id ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end", flexShrink: 0 }}>
+                      <span style={{ fontSize: "11px", color: C.red, fontWeight: "700", fontFamily: FONT_JP }}>削除しますか？</span>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button style={{ ...btnDanger, minHeight: "34px", width: "auto", padding: "5px 12px", fontSize: "12px", fontFamily: FONT_JP }} onClick={() => { onDelete(m.id); setDeleteMatId(null); }}>削除</button>
+                        <button style={{ ...btnGhost, minHeight: "34px", width: "auto", padding: "5px 10px", fontSize: "12px", fontFamily: FONT_JP }} onClick={() => setDeleteMatId(null)}>戻る</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button style={{ ...btnDanger, flexShrink: 0, fontFamily: FONT_JP }} onClick={() => setDeleteMatId(m.id)}>削除</button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )
+      }
+    </div>
+  );
+};
+
+// ─── 資格・科目設定 ───────────────────────────────────────────
+const SettingsTab = ({ qualifications, onUpdateQuals }) => {
+  const [newName,        setNewName]        = useState("");
+  const [newColor,       setNewColor]       = useState("#22d3ee");
+  const [newSubject,     setNewSubject]     = useState({});
+  const [confirmId,      setConfirmId]      = useState(null);
+  const [subjectConfirm, setSubjectConfirm] = useState(null);
+  const [msg, setMsg] = useState({ type: "", text: "" });
+  const showMsg = (type, text) => { setMsg({ type, text }); setTimeout(() => setMsg({ type: "", text: "" }), 3000); };
+
+  const addQual      = () => { if (!newName.trim()) { showMsg("error", "資格名を入力してください"); return; } if (qualifications.find(q => q.name === newName.trim())) { showMsg("error", "同じ名前がすでに存在します"); return; } onUpdateQuals([...qualifications, { id: `q_${Date.now()}`, name: newName.trim(), color: newColor, subjects: [] }]); setNewName(""); showMsg("success", `「${newName}」を追加しました`); };
+  const deleteQual   = id  => { onUpdateQuals(qualifications.filter(q => q.id !== id)); setConfirmId(null); showMsg("success", "削除しました"); };
+  const addSubject   = qid => { const n = (newSubject[qid]||"").trim(); if (!n) { showMsg("error", "科目名を入力してください"); return; } onUpdateQuals(qualifications.map(q => { if (q.id !== qid) return q; if (q.subjects.includes(n)) { showMsg("error", "同じ科目名がすでに存在します"); return q; } return { ...q, subjects: [...q.subjects, n] }; })); setNewSubject(p => ({ ...p, [qid]: "" })); showMsg("success", `「${n}」を追加しました`); };
+  const deleteSubject = (qid, s) => onUpdateQuals(qualifications.map(q => q.id === qid ? { ...q, subjects: q.subjects.filter(x => x !== s) } : q));
+  const changeColor   = (qid, c) => onUpdateQuals(qualifications.map(q => q.id === qid ? { ...q, color: c } : q));
+
+  return (
+    <div>
+      {msg.text && <div style={msg.type === "error" ? errorBox : successBox}>{msg.text}</div>}
+
+      <Card icon={Plus} title="新しい資格レベルを追加">
+        <FG label="資格名"><input style={inputStyle} placeholder="例: TOEIC, FP2級, 税理士" value={newName} onChange={e => setNewName(e.target.value)} onKeyDown={e => e.key === "Enter" && addQual()} /></FG>
+        <FG label="テーマカラー">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <input type="color" value={newColor} onChange={e => setNewColor(e.target.value)} style={{ width: "52px", height: "52px", border: `1.5px solid ${C.border}`, borderRadius: "10px", cursor: "pointer", padding: "3px", background: "transparent" }} />
+            <div><div style={{ fontSize: "16px", fontWeight: "700", color: newColor, fontFamily: FONT_EN }}>{newColor}</div><div style={{ fontSize: "12px", color: C.textMuted, fontFamily: FONT_JP }}>タップして色を選択</div></div>
+          </div>
+        </FG>
+        <button style={btnPrimary} onClick={addQual}><Plus size={16} strokeWidth={2.5} /> 資格レベルを追加</button>
+      </Card>
+
+      {qualifications.map(q => (
+        <div key={q.id} style={{ ...card, borderLeft: `3px solid ${q.color}`, marginBottom: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+            <input type="color" value={q.color} onChange={e => changeColor(q.id, e.target.value)} style={{ width: "34px", height: "34px", border: "none", borderRadius: "8px", cursor: "pointer", padding: 0, flexShrink: 0, background: "transparent" }} title="色を変更" />
+            <div style={{ fontSize: "16px", fontWeight: "700", color: q.color, flex: 1, fontFamily: FONT_JP }}>{q.name}</div>
+          </div>
+
+          <p style={{ ...labelStyle, marginBottom: "8px" }}>登録済みの科目</p>
+          {q.subjects.length === 0
+            ? <p style={{ fontSize: "13px", color: C.textMuted, marginBottom: "12px", fontFamily: FONT_JP }}>科目がまだありません</p>
+            : (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "12px" }}>
+                {q.subjects.map(s => {
+                  const key = `${q.id}::${s}`;
+                  return (
+                    <div key={s} style={{ display: "flex", alignItems: "center", gap: "5px", background: q.color+"22", border: `1px solid ${q.color}44`, borderRadius: "8px", padding: "7px 10px" }}>
+                      <span style={{ fontSize: "13px", fontWeight: "600", color: q.color, fontFamily: FONT_JP }}>{s}</span>
+                      {subjectConfirm === key ? (
+                        <>
+                          <span style={{ fontSize: "10px", color: C.red, fontWeight: "700", marginLeft: "3px", fontFamily: FONT_JP }}>削除?</span>
+                          <button onClick={() => { deleteSubject(q.id, s); setSubjectConfirm(null); }} style={{ ...base, background: C.redBg, border: `1px solid ${C.red}44`, color: C.red, borderRadius: "5px", fontSize: "11px", fontWeight: "700", padding: "2px 7px", cursor: "pointer", fontFamily: FONT_EN }}>Yes</button>
+                          <button onClick={() => setSubjectConfirm(null)} style={{ ...base, background: C.bg3, border: `1px solid ${C.border}`, color: C.textSub, borderRadius: "5px", fontSize: "11px", fontWeight: "700", padding: "2px 7px", cursor: "pointer", fontFamily: FONT_EN }}>No</button>
+                        </>
+                      ) : (
+                        <button onClick={() => setSubjectConfirm(key)} style={{ ...base, background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: "14px", lineHeight: 1, padding: "0 0 0 3px" }}>×</button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          }
+
+          <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
+            <input style={{ ...inputStyle, flex: 1 }} placeholder="科目名を入力" value={newSubject[q.id]||""} onChange={e => setNewSubject(p => ({ ...p, [q.id]: e.target.value }))} onKeyDown={e => e.key === "Enter" && addSubject(q.id)} />
+            <button style={{ ...btnGhost, width: "auto", padding: "0 16px", whiteSpace: "nowrap", fontFamily: FONT_JP }} onClick={() => addSubject(q.id)}>+ 追加</button>
+          </div>
+
+          {confirmId === q.id ? (
+            <div style={{ background: C.redBg, borderRadius: "10px", padding: "12px", border: `1px solid ${C.red}33` }}>
+              <div style={{ fontSize: "13px", color: C.red, fontWeight: "700", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px", fontFamily: FONT_JP }}><AlertTriangle size={14} />「{q.name}」を削除しますか？</div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button style={{ ...btnDanger, width: "auto", fontWeight: "700", padding: "9px 20px", fontFamily: FONT_JP }} onClick={() => deleteQual(q.id)}>削除する</button>
+                <button style={{ ...btnGhost, width: "auto", padding: "9px 16px", fontSize: "13px", fontFamily: FONT_JP }} onClick={() => setConfirmId(null)}>キャンセル</button>
+              </div>
+            </div>
+          ) : (
+            <button style={{ ...btnDanger, width: "auto", fontSize: "13px", fontFamily: FONT_JP }} onClick={() => setConfirmId(q.id)}>この資格レベルを削除</button>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ─── メインアプリ ─────────────────────────────────────────────
+function App() {
+  const [qualifications, setQualifications] = useState(() => loadData("asm2_quals", DEFAULT_QUALIFICATIONS));
+  const [materials,      setMaterials]      = useState(() => loadData("asm2_mats",  []));
+  const [studyLogs,      setStudyLogs]      = useState(() => loadData("asm2_logs",  []));
+  const [mainQualId,     setMainQualId]     = useState(() => loadData("asm2_main",  "q1"));
+  const [activeTab,      setActiveTab]      = useState("dashboard");
+  const [sheetOpen,      setSheetOpen]      = useState(false);
+
+  useEffect(() => { injectFont(); }, []);
+  useEffect(() => { let meta = document.querySelector('meta[name="viewport"]'); if (!meta) { meta = document.createElement("meta"); meta.name = "viewport"; document.head.appendChild(meta); } meta.content = "width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"; }, []);
+  useEffect(() => saveData("asm2_quals", qualifications), [qualifications]);
+  useEffect(() => saveData("asm2_mats",  materials),      [materials]);
+  useEffect(() => saveData("asm2_logs",  studyLogs),      [studyLogs]);
+  useEffect(() => saveData("asm2_main",  mainQualId),     [mainQualId]);
+
+  const addMaterial = useCallback(mat => setMaterials(p => [...p, mat]), []);
+  const delMaterial = useCallback(id  => { setMaterials(p => p.filter(m => m.id !== id)); setStudyLogs(p => p.filter(l => l.materialId !== id)); }, []);
+  const addLog      = useCallback(log => setStudyLogs(p => [log, ...p]), []);
+  const delLog      = useCallback(id  => setStudyLogs(p => p.filter(l => l.id !== id)), []);
+
+  const isSubPage = ["charts","materials","settings"].includes(activeTab);
+  const subPageMeta = { charts: { label: "グラフ", Icon: BarChart2 }, materials: { label: "教材管理", Icon: BookMarked }, settings: { label: "資格設定", Icon: Settings } };
+  const mainQual = qualifications.find(q => q.id === mainQualId);
+
+  const TABS = [
+    { id: "dashboard", label: "ホーム",   Icon: Home     },
+    { id: "timer",     label: "タイマー", Icon: Timer    },
+    { id: "record",    label: "記録",     Icon: PenLine  },
+    { id: "history",   label: "履歴",     Icon: History  },
+    { id: "more",      label: "メニュー", Icon: MoreHorizontal },
+  ];
+
+  return (
+    <div style={{ fontFamily: FONT_JP, background: C.bg, minHeight: "100dvh" }}>
+      {/* ヘッダー */}
+      <header style={{ background: C.bg2, borderBottom: `1px solid ${C.border}`, padding: "0 16px", paddingTop: "env(safe-area-inset-top)", position: "sticky", top: 0, zIndex: 20, height: `calc(56px + env(safe-area-inset-top))`, display: "flex", alignItems: "flex-end" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", paddingBottom: "12px" }}>
+          {isSubPage ? (
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button onClick={() => setActiveTab("dashboard")} style={{ ...base, background: C.bg3, border: `1px solid ${C.border}`, color: C.text, borderRadius: "10px", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <ChevronLeft size={20} strokeWidth={2} />
+              </button>
+              {(() => { const meta = subPageMeta[activeTab]; return <div style={{ display: "flex", alignItems: "center", gap: "8px" }}><meta.Icon size={16} color={C.cyan} /><span style={{ fontSize: "16px", fontWeight: "700", color: C.text, fontFamily: FONT_JP }}>{meta.label}</span></div>; })()}
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ width: "32px", height: "32px", background: `linear-gradient(135deg,${C.cyanDim},${C.cyan})`, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <BookOpen size={16} color={C.bg} strokeWidth={2.5} />
+              </div>
+              <div>
+                <div style={{ fontSize: "15px", fontWeight: "800", color: C.text, letterSpacing: "0.01em", fontFamily: FONT_EN, lineHeight: 1 }}>Study Manager</div>
+                <div style={{ fontSize: "10px", color: C.textMuted, fontFamily: FONT_EN, letterSpacing: "0.08em" }}>ASM</div>
+              </div>
+            </div>
+          )}
+          {mainQual && !isSubPage && (
+            <div style={{ background: mainQual.color+"22", border: `1px solid ${mainQual.color}44`, borderRadius: "8px", padding: "5px 12px", fontSize: "12px", fontWeight: "700", color: mainQual.color, fontFamily: FONT_JP }}>
+              {mainQual.name}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* メインコンテンツ */}
+      <main style={{ padding: "14px 14px", paddingBottom: "calc(80px + env(safe-area-inset-bottom))", WebkitOverflowScrolling: "touch" }}>
+        {activeTab === "dashboard" && <DashboardTab studyLogs={studyLogs} materials={materials} qualifications={qualifications} mainQualId={mainQualId} onSetMain={setMainQualId} />}
+        {activeTab === "timer"     && <TimerTab qualifications={qualifications} materials={materials} onLogFromTimer={addLog} />}
+        {activeTab === "record"    && <RecordTab materials={materials} qualifications={qualifications} onAdd={addLog} />}
+        {activeTab === "history"   && <HistoryTab studyLogs={studyLogs} materials={materials} qualifications={qualifications} onDelete={delLog} />}
+        {activeTab === "charts"    && <ChartsTab studyLogs={studyLogs} materials={materials} qualifications={qualifications} />}
+        {activeTab === "materials" && <MaterialsTab materials={materials} qualifications={qualifications} onAdd={addMaterial} onDelete={delMaterial} />}
+        {activeTab === "settings"  && <SettingsTab qualifications={qualifications} onUpdateQuals={setQualifications} />}
+      </main>
+
+      {/* ボトムナビ */}
+      <nav style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.border}`, display: "flex", paddingBottom: "env(safe-area-inset-bottom)", zIndex: 30 }}>
+        {TABS.map(({ id, label, Icon }) => {
+          const isActive = id === "more" ? (isSubPage || sheetOpen) : activeTab === id;
+          return (
+            <button key={id} onClick={() => { if (id === "more") { setSheetOpen(p => !p); } else { setActiveTab(id); setSheetOpen(false); } }}
+              style={{ ...base, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "10px 4px", border: "none", background: "none", cursor: "pointer", color: isActive ? C.cyan : C.textMuted, minHeight: "58px", position: "relative", transition: "color 0.15s" }}>
+              {isActive && <div style={{ position: "absolute", top: 0, left: "25%", right: "25%", height: "2px", background: C.cyan, borderRadius: "0 0 2px 2px", boxShadow: `0 0 8px ${C.cyan}` }} />}
+              <div style={{ padding: "4px 10px", borderRadius: "10px", background: isActive ? C.cyanGlow : "transparent", transition: "background 0.15s", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Icon size={22} strokeWidth={isActive ? 2 : 1.5} />
+              </div>
+              <span style={{ fontSize: "10px", fontWeight: isActive ? "700" : "400", marginTop: "2px", letterSpacing: "0.02em", fontFamily: FONT_JP }}>{label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} onNavigate={id => { setActiveTab(id); setSheetOpen(false); }} />
+    </div>
+  );
+}
+
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      React.createElement(App)
+    );
+  </script>
+</body>
+</html>

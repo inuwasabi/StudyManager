@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0b1120" />
+  <title>ASM - Study Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body { min-height: 100vh; min-height: 100dvh; background: #0b1120; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    #root { min-height: 100vh; min-height: 100dvh; }
+    select { appearance: none; -webkit-appearance: none; }
+    input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.6); }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    ::-webkit-scrollbar { display: none; }
+    * { scrollbar-width: none; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <!-- Recharts のみ外部CDN (React/ReactDOMはバンドル済み) -->
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+  <script>
+var ASMBundle = (() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
+    get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
+  }) : x)(function(x) {
+    if (typeof require !== "undefined") return require.apply(this, arguments);
+    throw Error('Dynamic require of "' + x + '" is not supported');
+  });
+  var __commonJS = (cb, mod) => function __require2() {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  };
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // ../home/claude/.npm-global/lib/node_modules/react/cjs/react.development.js
+  var require_react_development = __commonJS({
+    "../home/claude/.npm-global/lib/node_modules/react/cjs/react.development.js"(exports, module) {
+      "use strict";
+      (function() {
+        function defineDeprecationWarning(methodName, info) {
+          Object.defineProperty(Component.prototype, methodName, {
+            get: function() {
+              console.warn(
+                "%s(...) is deprecated in plain JavaScript React classes. %s",
+                info[0],
+                info[1]
+              );
+            }
+          });
+        }
+        function getIteratorFn(maybeIterable) {
+          if (null === maybeIterable || "object" !== typeof maybeIterable)
+            return null;
+          maybeIterable = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable["@@iterator"];
+          return "function" === typeof maybeIterable ? maybeIterable : null;
+        }
+        function warnNoop(publicInstance, callerName) {
+          publicInstance = (publicInstance = publicInstance.constructor) && (publicInstance.displayName || publicInstance.name) || "ReactClass";
+          var warningKey = publicInstance + "." + callerName;
+          didWarnStateUpdateForUnmountedComponent[warningKey] || (console.error(
+            "Can't call %s on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the %s component.",
+            callerName,
+            publicInstance
+          ), didWarnStateUpdateForUnmountedComponent[warningKey] = true);
+        }
+        function Component(props, context, updater) {
+          this.props = props;
+          this.context = context;
+          this.refs = emptyObject;
+          this.updater = updater || ReactNoopUpdateQueue;
+        }
+        function ComponentDummy() {
+        }
+        function PureComponent(props, context, updater) {
+          this.props = props;
+          this.context = context;
+          this.refs = emptyObject;
+          this.updater = updater || ReactNoopUpdateQueue;
+        }
+        function noop() {
+        }
+        function testStringCoercion(value) {
+          return "" + value;
+        }
+        function checkKeyStringCoercion(value) {
+          try {
+            testStringCoercion(value);
+            var JSCompiler_inline_result = false;
+          } catch (e) {
+            JSCompiler_inline_result = true;
+          }
+          if (JSCompiler_inline_result) {
+            JSCompiler_inline_result = console;
+            var JSCompiler_temp_const = JSCompiler_inline_result.error;
+            var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value[Symbol.toStringTag] || value.constructor.name || "Object";
+            JSCompiler_temp_const.call(
+              JSCompiler_inline_result,
+              "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
+              JSCompiler_inline_result$jscomp$0
+            );
+            return testStringCoercion(value);
+          }
+        }
+        function getComponentNameFromType(type) {
+          if (null == type) return null;
+          if ("function" === typeof type)
+            return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
+          if ("string" === typeof type) return type;
+          switch (type) {
+            case REACT_FRAGMENT_TYPE:
+              return "Fragment";
+            case REACT_PROFILER_TYPE:
+              return "Profiler";
+            case REACT_STRICT_MODE_TYPE:
+              return "StrictMode";
+            case REACT_SUSPENSE_TYPE:
+              return "Suspense";
+            case REACT_SUSPENSE_LIST_TYPE:
+              return "SuspenseList";
+            case REACT_ACTIVITY_TYPE:
+              return "Activity";
+          }
+          if ("object" === typeof type)
+            switch ("number" === typeof type.tag && console.error(
+              "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
+            ), type.$$typeof) {
+              case REACT_PORTAL_TYPE:
+                return "Portal";
+              case REACT_CONTEXT_TYPE:
+                return type.displayName || "Context";
+              case REACT_CONSUMER_TYPE:
+                return (type._context.displayName || "Context") + ".Consumer";
+              case REACT_FORWARD_REF_TYPE:
+                var innerType = type.render;
+                type = type.displayName;
+                type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
+                return type;
+              case REACT_MEMO_TYPE:
+                return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
+              case REACT_LAZY_TYPE:
+                innerType = type._payload;
+                type = type._init;
+                try {
+                  return getComponentNameFromType(type(innerType));
+                } catch (x) {
+                }
+            }
+          return null;
+        }
+        function getTaskName(type) {
+          if (type === REACT_FRAGMENT_TYPE) return "<>";
+          if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
+            return "<...>";
+          try {
+            var name = getComponentNameFromType(type);
+            return name ? "<" + name + ">" : "<...>";
+          } catch (x) {
+            return "<...>";
+          }
+        }
+        function getOwner() {
+          var dispatcher = ReactSharedInternals.A;
+          return null === dispatcher ? null : dispatcher.getOwner();
+        }
+        function UnknownOwner() {
+          return Error("react-stack-top-frame");
+        }
+        function hasValidKey(config) {
+          if (hasOwnProperty.call(config, "key")) {
+            var getter = Object.getOwnPropertyDescriptor(config, "key").get;
+            if (getter && getter.isReactWarning) return false;
+          }
+          return void 0 !== config.key;
+        }
+        function defineKeyPropWarningGetter(props, displayName) {
+          function warnAboutAccessingKey() {
+            specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
+              "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
+              displayName
+            ));
+          }
+          warnAboutAccessingKey.isReactWarning = true;
+          Object.defineProperty(props, "key", {
+            get: warnAboutAccessingKey,
+            configurable: true
+          });
+        }
+        function elementRefGetterWithDeprecationWarning() {
+          var componentName = getComponentNameFromType(this.type);
+          didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
+            "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
+          ));
+          componentName = this.props.ref;
+          return void 0 !== componentName ? componentName : null;
+        }
+        function ReactElement(type, key, props, owner, debugStack, debugTask) {
+          var refProp = props.ref;
+          type = {
+            $$typeof: REACT_ELEMENT_TYPE,
+            type,
+            key,
+            props,
+            _owner: owner
+          };
+          null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
+            enumerable: false,
+            get: elementRefGetterWithDeprecationWarning
+          }) : Object.defineProperty(type, "ref", { enumerable: false, value: null });
+          type._store = {};
+          Object.defineProperty(type._store, "validated", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: 0
+          });
+          Object.defineProperty(type, "_debugInfo", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: null
+          });
+          Object.defineProperty(type, "_debugStack", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: debugStack
+          });
+          Object.defineProperty(type, "_debugTask", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: debugTask
+          });
+          Object.freeze && (Object.freeze(type.props), Object.freeze(type));
+          return type;
+        }
+        function cloneAndReplaceKey(oldElement, newKey) {
+          newKey = ReactElement(
+            oldElement.type,
+            newKey,
+            oldElement.props,
+            oldElement._owner,
+            oldElement._debugStack,
+            oldElement._debugTask
+          );
+          oldElement._store && (newKey._store.validated = oldElement._store.validated);
+          return newKey;
+        }
+        function validateChildKeys(node) {
+          isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
+        }
+        function isValidElement(object) {
+          return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+        }
+        function escape(key) {
+          var escaperLookup = { "=": "=0", ":": "=2" };
+          return "$" + key.replace(/[=:]/g, function(match) {
+            return escaperLookup[match];
+          });
+        }
+        function getElementKey(element, index) {
+          return "object" === typeof element && null !== element && null != element.key ? (checkKeyStringCoercion(element.key), escape("" + element.key)) : index.toString(36);
+        }
+        function resolveThenable(thenable) {
+          switch (thenable.status) {
+            case "fulfilled":
+              return thenable.value;
+            case "rejected":
+              throw thenable.reason;
+            default:
+              switch ("string" === typeof thenable.status ? thenable.then(noop, noop) : (thenable.status = "pending", thenable.then(
+                function(fulfilledValue) {
+                  "pending" === thenable.status && (thenable.status = "fulfilled", thenable.value = fulfilledValue);
+                },
+                function(error) {
+                  "pending" === thenable.status && (thenable.status = "rejected", thenable.reason = error);
+                }
+              )), thenable.status) {
+                case "fulfilled":
+                  return thenable.value;
+                case "rejected":
+                  throw thenable.reason;
+              }
+          }
+          throw thenable;
+        }
+        function mapIntoArray(children, array, escapedPrefix, nameSoFar, callback) {
+          var type = typeof children;
+          if ("undefined" === type || "boolean" === type) children = null;
+          var invokeCallback = false;
+          if (null === children) invokeCallback = true;
+          else
+            switch (type) {
+              case "bigint":
+              case "string":
+              case "number":
+                invokeCallback = true;
+                break;
+              case "object":
+                switch (children.$$typeof) {
+                  case REACT_ELEMENT_TYPE:
+                  case REACT_PORTAL_TYPE:
+                    invokeCallback = true;
+                    break;
+                  case REACT_LAZY_TYPE:
+                    return invokeCallback = children._init, mapIntoArray(
+                      invokeCallback(children._payload),
+                      array,
+                      escapedPrefix,
+                      nameSoFar,
+                      callback
+                    );
+                }
+            }
+          if (invokeCallback) {
+            invokeCallback = children;
+            callback = callback(invokeCallback);
+            var childKey = "" === nameSoFar ? "." + getElementKey(invokeCallback, 0) : nameSoFar;
+            isArrayImpl(callback) ? (escapedPrefix = "", null != childKey && (escapedPrefix = childKey.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array, escapedPrefix, "", function(c) {
+              return c;
+            })) : null != callback && (isValidElement(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(
+              callback,
+              escapedPrefix + (null == callback.key || invokeCallback && invokeCallback.key === callback.key ? "" : ("" + callback.key).replace(
+                userProvidedKeyEscapeRegex,
+                "$&/"
+              ) + "/") + childKey
+            ), "" !== nameSoFar && null != invokeCallback && isValidElement(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array.push(callback));
+            return 1;
+          }
+          invokeCallback = 0;
+          childKey = "" === nameSoFar ? "." : nameSoFar + ":";
+          if (isArrayImpl(children))
+            for (var i = 0; i < children.length; i++)
+              nameSoFar = children[i], type = childKey + getElementKey(nameSoFar, i), invokeCallback += mapIntoArray(
+                nameSoFar,
+                array,
+                escapedPrefix,
+                type,
+                callback
+              );
+          else if (i = getIteratorFn(children), "function" === typeof i)
+            for (i === children.entries && (didWarnAboutMaps || console.warn(
+              "Using Maps as children is not supported. Use an array of keyed ReactElements instead."
+            ), didWarnAboutMaps = true), children = i.call(children), i = 0; !(nameSoFar = children.next()).done; )
+              nameSoFar = nameSoFar.value, type = childKey + getElementKey(nameSoFar, i++), invokeCallback += mapIntoArray(
+                nameSoFar,
+                array,
+                escapedPrefix,
+                type,
+                callback
+              );
+          else if ("object" === type) {
+            if ("function" === typeof children.then)
+              return mapIntoArray(
+                resolveThenable(children),
+                array,
+                escapedPrefix,
+                nameSoFar,
+                callback
+              );
+            array = String(children);
+            throw Error(
+              "Objects are not valid as a React child (found: " + ("[object Object]" === array ? "object with keys {" + Object.keys(children).join(", ") + "}" : array) + "). If you meant to render a collection of children, use an array instead."
+            );
+          }
+          return invokeCallback;
+        }
+        function mapChildren(children, func, context) {
+          if (null == children) return children;
+          var result = [], count = 0;
+          mapIntoArray(children, result, "", "", function(child) {
+            return func.call(context, child, count++);
+          });
+          return result;
+        }
+        function lazyInitializer(payload) {
+          if (-1 === payload._status) {
+            var ioInfo = payload._ioInfo;
+            null != ioInfo && (ioInfo.start = ioInfo.end = performance.now());
+            ioInfo = payload._result;
+            var thenable = ioInfo();
+            thenable.then(
+              function(moduleObject) {
+                if (0 === payload._status || -1 === payload._status) {
+                  payload._status = 1;
+                  payload._result = moduleObject;
+                  var _ioInfo = payload._ioInfo;
+                  null != _ioInfo && (_ioInfo.end = performance.now());
+                  void 0 === thenable.status && (thenable.status = "fulfilled", thenable.value = moduleObject);
+                }
+              },
+              function(error) {
+                if (0 === payload._status || -1 === payload._status) {
+                  payload._status = 2;
+                  payload._result = error;
+                  var _ioInfo2 = payload._ioInfo;
+                  null != _ioInfo2 && (_ioInfo2.end = performance.now());
+                  void 0 === thenable.status && (thenable.status = "rejected", thenable.reason = error);
+                }
+              }
+            );
+            ioInfo = payload._ioInfo;
+            if (null != ioInfo) {
+              ioInfo.value = thenable;
+              var displayName = thenable.displayName;
+              "string" === typeof displayName && (ioInfo.name = displayName);
+            }
+            -1 === payload._status && (payload._status = 0, payload._result = thenable);
+          }
+          if (1 === payload._status)
+            return ioInfo = payload._result, void 0 === ioInfo && console.error(
+              "lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))\n\nDid you accidentally put curly braces around the import?",
+              ioInfo
+            ), "default" in ioInfo || console.error(
+              "lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))",
+              ioInfo
+            ), ioInfo.default;
+          throw payload._result;
+        }
+        function resolveDispatcher() {
+          var dispatcher = ReactSharedInternals.H;
+          null === dispatcher && console.error(
+            "Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem."
+          );
+          return dispatcher;
+        }
+        function releaseAsyncTransition() {
+          ReactSharedInternals.asyncTransitions--;
+        }
+        function enqueueTask(task) {
+          if (null === enqueueTaskImpl)
+            try {
+              var requireString = ("require" + Math.random()).slice(0, 7);
+              enqueueTaskImpl = (module && module[requireString]).call(
+                module,
+                "timers"
+              ).setImmediate;
+            } catch (_err) {
+              enqueueTaskImpl = function(callback) {
+                false === didWarnAboutMessageChannel && (didWarnAboutMessageChannel = true, "undefined" === typeof MessageChannel && console.error(
+                  "This browser does not have a MessageChannel implementation, so enqueuing tasks via await act(async () => ...) will fail. Please file an issue at https://github.com/facebook/react/issues if you encounter this warning."
+                ));
+                var channel = new MessageChannel();
+                channel.port1.onmessage = callback;
+                channel.port2.postMessage(void 0);
+              };
+            }
+          return enqueueTaskImpl(task);
+        }
+        function aggregateErrors(errors) {
+          return 1 < errors.length && "function" === typeof AggregateError ? new AggregateError(errors) : errors[0];
+        }
+        function popActScope(prevActQueue, prevActScopeDepth) {
+          prevActScopeDepth !== actScopeDepth - 1 && console.error(
+            "You seem to have overlapping act() calls, this is not supported. Be sure to await previous act() calls before making a new one. "
+          );
+          actScopeDepth = prevActScopeDepth;
+        }
+        function recursivelyFlushAsyncActWork(returnValue, resolve, reject) {
+          var queue = ReactSharedInternals.actQueue;
+          if (null !== queue)
+            if (0 !== queue.length)
+              try {
+                flushActQueue(queue);
+                enqueueTask(function() {
+                  return recursivelyFlushAsyncActWork(returnValue, resolve, reject);
+                });
+                return;
+              } catch (error) {
+                ReactSharedInternals.thrownErrors.push(error);
+              }
+            else ReactSharedInternals.actQueue = null;
+          0 < ReactSharedInternals.thrownErrors.length ? (queue = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, reject(queue)) : resolve(returnValue);
+        }
+        function flushActQueue(queue) {
+          if (!isFlushing) {
+            isFlushing = true;
+            var i = 0;
+            try {
+              for (; i < queue.length; i++) {
+                var callback = queue[i];
+                do {
+                  ReactSharedInternals.didUsePromise = false;
+                  var continuation = callback(false);
+                  if (null !== continuation) {
+                    if (ReactSharedInternals.didUsePromise) {
+                      queue[i] = callback;
+                      queue.splice(0, i);
+                      return;
+                    }
+                    callback = continuation;
+                  } else break;
+                } while (1);
+              }
+              queue.length = 0;
+            } catch (error) {
+              queue.splice(0, i + 1), ReactSharedInternals.thrownErrors.push(error);
+            } finally {
+              isFlushing = false;
+            }
+          }
+        }
+        "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
+        var REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, didWarnStateUpdateForUnmountedComponent = {}, ReactNoopUpdateQueue = {
+          isMounted: function() {
+            return false;
+          },
+          enqueueForceUpdate: function(publicInstance) {
+            warnNoop(publicInstance, "forceUpdate");
+          },
+          enqueueReplaceState: function(publicInstance) {
+            warnNoop(publicInstance, "replaceState");
+          },
+          enqueueSetState: function(publicInstance) {
+            warnNoop(publicInstance, "setState");
+          }
+        }, assign = Object.assign, emptyObject = {};
+        Object.freeze(emptyObject);
+        Component.prototype.isReactComponent = {};
+        Component.prototype.setState = function(partialState, callback) {
+          if ("object" !== typeof partialState && "function" !== typeof partialState && null != partialState)
+            throw Error(
+              "takes an object of state variables to update or a function which returns an object of state variables."
+            );
+          this.updater.enqueueSetState(this, partialState, callback, "setState");
+        };
+        Component.prototype.forceUpdate = function(callback) {
+          this.updater.enqueueForceUpdate(this, callback, "forceUpdate");
+        };
+        var deprecatedAPIs = {
+          isMounted: [
+            "isMounted",
+            "Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks."
+          ],
+          replaceState: [
+            "replaceState",
+            "Refactor your code to use setState instead (see https://github.com/facebook/react/issues/3236)."
+          ]
+        };
+        for (fnName in deprecatedAPIs)
+          deprecatedAPIs.hasOwnProperty(fnName) && defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
+        ComponentDummy.prototype = Component.prototype;
+        deprecatedAPIs = PureComponent.prototype = new ComponentDummy();
+        deprecatedAPIs.constructor = PureComponent;
+        assign(deprecatedAPIs, Component.prototype);
+        deprecatedAPIs.isPureReactComponent = true;
+        var isArrayImpl = Array.isArray, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = {
+          H: null,
+          A: null,
+          T: null,
+          S: null,
+          actQueue: null,
+          asyncTransitions: 0,
+          isBatchingLegacy: false,
+          didScheduleLegacyUpdate: false,
+          didUsePromise: false,
+          thrownErrors: [],
+          getCurrentStack: null,
+          recentlyCreatedOwnerStacks: 0
+        }, hasOwnProperty = Object.prototype.hasOwnProperty, createTask = console.createTask ? console.createTask : function() {
+          return null;
+        };
+        deprecatedAPIs = {
+          react_stack_bottom_frame: function(callStackForError) {
+            return callStackForError();
+          }
+        };
+        var specialPropKeyWarningShown, didWarnAboutOldJSXRuntime;
+        var didWarnAboutElementRef = {};
+        var unknownOwnerDebugStack = deprecatedAPIs.react_stack_bottom_frame.bind(
+          deprecatedAPIs,
+          UnknownOwner
+        )();
+        var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
+        var didWarnAboutMaps = false, userProvidedKeyEscapeRegex = /\/+/g, reportGlobalError = "function" === typeof reportError ? reportError : function(error) {
+          if ("object" === typeof window && "function" === typeof window.ErrorEvent) {
+            var event = new window.ErrorEvent("error", {
+              bubbles: true,
+              cancelable: true,
+              message: "object" === typeof error && null !== error && "string" === typeof error.message ? String(error.message) : String(error),
+              error
+            });
+            if (!window.dispatchEvent(event)) return;
+          } else if ("object" === typeof process && "function" === typeof process.emit) {
+            process.emit("uncaughtException", error);
+            return;
+          }
+          console.error(error);
+        }, didWarnAboutMessageChannel = false, enqueueTaskImpl = null, actScopeDepth = 0, didWarnNoAwaitAct = false, isFlushing = false, queueSeveralMicrotasks = "function" === typeof queueMicrotask ? function(callback) {
+          queueMicrotask(function() {
+            return queueMicrotask(callback);
+          });
+        } : enqueueTask;
+        deprecatedAPIs = Object.freeze({
+          __proto__: null,
+          c: function(size) {
+            return resolveDispatcher().useMemoCache(size);
+          }
+        });
+        var fnName = {
+          map: mapChildren,
+          forEach: function(children, forEachFunc, forEachContext) {
+            mapChildren(
+              children,
+              function() {
+                forEachFunc.apply(this, arguments);
+              },
+              forEachContext
+            );
+          },
+          count: function(children) {
+            var n = 0;
+            mapChildren(children, function() {
+              n++;
+            });
+            return n;
+          },
+          toArray: function(children) {
+            return mapChildren(children, function(child) {
+              return child;
+            }) || [];
+          },
+          only: function(children) {
+            if (!isValidElement(children))
+              throw Error(
+                "React.Children.only expected to receive a single React element child."
+              );
+            return children;
+          }
+        };
+        exports.Activity = REACT_ACTIVITY_TYPE;
+        exports.Children = fnName;
+        exports.Component = Component;
+        exports.Fragment = REACT_FRAGMENT_TYPE;
+        exports.Profiler = REACT_PROFILER_TYPE;
+        exports.PureComponent = PureComponent;
+        exports.StrictMode = REACT_STRICT_MODE_TYPE;
+        exports.Suspense = REACT_SUSPENSE_TYPE;
+        exports.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = ReactSharedInternals;
+        exports.__COMPILER_RUNTIME = deprecatedAPIs;
+        exports.act = function(callback) {
+          var prevActQueue = ReactSharedInternals.actQueue, prevActScopeDepth = actScopeDepth;
+          actScopeDepth++;
+          var queue = ReactSharedInternals.actQueue = null !== prevActQueue ? prevActQueue : [], didAwaitActCall = false;
+          try {
+            var result = callback();
+          } catch (error) {
+            ReactSharedInternals.thrownErrors.push(error);
+          }
+          if (0 < ReactSharedInternals.thrownErrors.length)
+            throw popActScope(prevActQueue, prevActScopeDepth), callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
+          if (null !== result && "object" === typeof result && "function" === typeof result.then) {
+            var thenable = result;
+            queueSeveralMicrotasks(function() {
+              didAwaitActCall || didWarnNoAwaitAct || (didWarnNoAwaitAct = true, console.error(
+                "You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);"
+              ));
+            });
+            return {
+              then: function(resolve, reject) {
+                didAwaitActCall = true;
+                thenable.then(
+                  function(returnValue) {
+                    popActScope(prevActQueue, prevActScopeDepth);
+                    if (0 === prevActScopeDepth) {
+                      try {
+                        flushActQueue(queue), enqueueTask(function() {
+                          return recursivelyFlushAsyncActWork(
+                            returnValue,
+                            resolve,
+                            reject
+                          );
+                        });
+                      } catch (error$0) {
+                        ReactSharedInternals.thrownErrors.push(error$0);
+                      }
+                      if (0 < ReactSharedInternals.thrownErrors.length) {
+                        var _thrownError = aggregateErrors(
+                          ReactSharedInternals.thrownErrors
+                        );
+                        ReactSharedInternals.thrownErrors.length = 0;
+                        reject(_thrownError);
+                      }
+                    } else resolve(returnValue);
+                  },
+                  function(error) {
+                    popActScope(prevActQueue, prevActScopeDepth);
+                    0 < ReactSharedInternals.thrownErrors.length ? (error = aggregateErrors(
+                      ReactSharedInternals.thrownErrors
+                    ), ReactSharedInternals.thrownErrors.length = 0, reject(error)) : reject(error);
+                  }
+                );
+              }
+            };
+          }
+          var returnValue$jscomp$0 = result;
+          popActScope(prevActQueue, prevActScopeDepth);
+          0 === prevActScopeDepth && (flushActQueue(queue), 0 !== queue.length && queueSeveralMicrotasks(function() {
+            didAwaitActCall || didWarnNoAwaitAct || (didWarnNoAwaitAct = true, console.error(
+              "A component suspended inside an `act` scope, but the `act` call was not awaited. When testing React components that depend on asynchronous data, you must await the result:\n\nawait act(() => ...)"
+            ));
+          }), ReactSharedInternals.actQueue = null);
+          if (0 < ReactSharedInternals.thrownErrors.length)
+            throw callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
+          return {
+            then: function(resolve, reject) {
+              didAwaitActCall = true;
+              0 === prevActScopeDepth ? (ReactSharedInternals.actQueue = queue, enqueueTask(function() {
+                return recursivelyFlushAsyncActWork(
+                  returnValue$jscomp$0,
+                  resolve,
+                  reject
+                );
+              })) : resolve(returnValue$jscomp$0);
+            }
+          };
+        };
+        exports.cache = function(fn) {
+          return function() {
+            return fn.apply(null, arguments);
+          };
+        };
+        exports.cacheSignal = function() {
+          return null;
+        };
+        exports.captureOwnerStack = function() {
+          var getCurrentStack = ReactSharedInternals.getCurrentStack;
+          return null === getCurrentStack ? null : getCurrentStack();
+        };
+        exports.cloneElement = function(element, config, children) {
+          if (null === element || void 0 === element)
+            throw Error(
+              "The argument must be a React element, but you passed " + element + "."
+            );
+          var props = assign({}, element.props), key = element.key, owner = element._owner;
+          if (null != config) {
+            var JSCompiler_inline_result;
+            a: {
+              if (hasOwnProperty.call(config, "ref") && (JSCompiler_inline_result = Object.getOwnPropertyDescriptor(
+                config,
+                "ref"
+              ).get) && JSCompiler_inline_result.isReactWarning) {
+                JSCompiler_inline_result = false;
+                break a;
+              }
+              JSCompiler_inline_result = void 0 !== config.ref;
+            }
+            JSCompiler_inline_result && (owner = getOwner());
+            hasValidKey(config) && (checkKeyStringCoercion(config.key), key = "" + config.key);
+            for (propName in config)
+              !hasOwnProperty.call(config, propName) || "key" === propName || "__self" === propName || "__source" === propName || "ref" === propName && void 0 === config.ref || (props[propName] = config[propName]);
+          }
+          var propName = arguments.length - 2;
+          if (1 === propName) props.children = children;
+          else if (1 < propName) {
+            JSCompiler_inline_result = Array(propName);
+            for (var i = 0; i < propName; i++)
+              JSCompiler_inline_result[i] = arguments[i + 2];
+            props.children = JSCompiler_inline_result;
+          }
+          props = ReactElement(
+            element.type,
+            key,
+            props,
+            owner,
+            element._debugStack,
+            element._debugTask
+          );
+          for (key = 2; key < arguments.length; key++)
+            validateChildKeys(arguments[key]);
+          return props;
+        };
+        exports.createContext = function(defaultValue) {
+          defaultValue = {
+            $$typeof: REACT_CONTEXT_TYPE,
+            _currentValue: defaultValue,
+            _currentValue2: defaultValue,
+            _threadCount: 0,
+            Provider: null,
+            Consumer: null
+          };
+          defaultValue.Provider = defaultValue;
+          defaultValue.Consumer = {
+            $$typeof: REACT_CONSUMER_TYPE,
+            _context: defaultValue
+          };
+          defaultValue._currentRenderer = null;
+          defaultValue._currentRenderer2 = null;
+          return defaultValue;
+        };
+        exports.createElement = function(type, config, children) {
+          for (var i = 2; i < arguments.length; i++)
+            validateChildKeys(arguments[i]);
+          i = {};
+          var key = null;
+          if (null != config)
+            for (propName in didWarnAboutOldJSXRuntime || !("__self" in config) || "key" in config || (didWarnAboutOldJSXRuntime = true, console.warn(
+              "Your app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform"
+            )), hasValidKey(config) && (checkKeyStringCoercion(config.key), key = "" + config.key), config)
+              hasOwnProperty.call(config, propName) && "key" !== propName && "__self" !== propName && "__source" !== propName && (i[propName] = config[propName]);
+          var childrenLength = arguments.length - 2;
+          if (1 === childrenLength) i.children = children;
+          else if (1 < childrenLength) {
+            for (var childArray = Array(childrenLength), _i = 0; _i < childrenLength; _i++)
+              childArray[_i] = arguments[_i + 2];
+            Object.freeze && Object.freeze(childArray);
+            i.children = childArray;
+          }
+          if (type && type.defaultProps)
+            for (propName in childrenLength = type.defaultProps, childrenLength)
+              void 0 === i[propName] && (i[propName] = childrenLength[propName]);
+          key && defineKeyPropWarningGetter(
+            i,
+            "function" === typeof type ? type.displayName || type.name || "Unknown" : type
+          );
+          var propName = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
+          return ReactElement(
+            type,
+            key,
+            i,
+            getOwner(),
+            propName ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
+            propName ? createTask(getTaskName(type)) : unknownOwnerDebugTask
+          );
+        };
+        exports.createRef = function() {
+          var refObject = { current: null };
+          Object.seal(refObject);
+          return refObject;
+        };
+        exports.forwardRef = function(render) {
+          null != render && render.$$typeof === REACT_MEMO_TYPE ? console.error(
+            "forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...))."
+          ) : "function" !== typeof render ? console.error(
+            "forwardRef requires a render function but was given %s.",
+            null === render ? "null" : typeof render
+          ) : 0 !== render.length && 2 !== render.length && console.error(
+            "forwardRef render functions accept exactly two parameters: props and ref. %s",
+            1 === render.length ? "Did you forget to use the ref parameter?" : "Any additional parameter will be undefined."
+          );
+          null != render && null != render.defaultProps && console.error(
+            "forwardRef render functions do not support defaultProps. Did you accidentally pass a React component?"
+          );
+          var elementType = { $$typeof: REACT_FORWARD_REF_TYPE, render }, ownName;
+          Object.defineProperty(elementType, "displayName", {
+            enumerable: false,
+            configurable: true,
+            get: function() {
+              return ownName;
+            },
+            set: function(name) {
+              ownName = name;
+              render.name || render.displayName || (Object.defineProperty(render, "name", { value: name }), render.displayName = name);
+            }
+          });
+          return elementType;
+        };
+        exports.isValidElement = isValidElement;
+        exports.lazy = function(ctor) {
+          ctor = { _status: -1, _result: ctor };
+          var lazyType = {
+            $$typeof: REACT_LAZY_TYPE,
+            _payload: ctor,
+            _init: lazyInitializer
+          }, ioInfo = {
+            name: "lazy",
+            start: -1,
+            end: -1,
+            value: null,
+            owner: null,
+            debugStack: Error("react-stack-top-frame"),
+            debugTask: console.createTask ? console.createTask("lazy()") : null
+          };
+          ctor._ioInfo = ioInfo;
+          lazyType._debugInfo = [{ awaited: ioInfo }];
+          return lazyType;
+        };
+        exports.memo = function(type, compare) {
+          null == type && console.error(
+            "memo: The first argument must be a component. Instead received: %s",
+            null === type ? "null" : typeof type
+          );
+          compare = {
+            $$typeof: REACT_MEMO_TYPE,
+            type,
+            compare: void 0 === compare ? null : compare
+          };
+          var ownName;
+          Object.defineProperty(compare, "displayName", {
+            enumerable: false,
+            configurable: true,
+            get: function() {
+              return ownName;
+            },
+            set: function(name) {
+              ownName = name;
+              type.name || type.displayName || (Object.defineProperty(type, "name", { value: name }), type.displayName = name);
+            }
+          });
+          return compare;
+        };
+        exports.startTransition = function(scope) {
+          var prevTransition = ReactSharedInternals.T, currentTransition = {};
+          currentTransition._updatedFibers = /* @__PURE__ */ new Set();
+          ReactSharedInternals.T = currentTransition;
+          try {
+            var returnValue = scope(), onStartTransitionFinish = ReactSharedInternals.S;
+            null !== onStartTransitionFinish && onStartTransitionFinish(currentTransition, returnValue);
+            "object" === typeof returnValue && null !== returnValue && "function" === typeof returnValue.then && (ReactSharedInternals.asyncTransitions++, returnValue.then(releaseAsyncTransition, releaseAsyncTransition), returnValue.then(noop, reportGlobalError));
+          } catch (error) {
+            reportGlobalError(error);
+          } finally {
+            null === prevTransition && currentTransition._updatedFibers && (scope = currentTransition._updatedFibers.size, currentTransition._updatedFibers.clear(), 10 < scope && console.warn(
+              "Detected a large number of updates inside startTransition. If this is due to a subscription please re-write it to use React provided hooks. Otherwise concurrent mode guarantees are off the table."
+            )), null !== prevTransition && null !== currentTransition.types && (null !== prevTransition.types && prevTransition.types !== currentTransition.types && console.error(
+              "We expected inner Transitions to have transferred the outer types set and that you cannot add to the outer Transition while inside the inner.This is a bug in React."
+            ), prevTransition.types = currentTransition.types), ReactSharedInternals.T = prevTransition;
+          }
+        };
+        exports.unstable_useCacheRefresh = function() {
+          return resolveDispatcher().useCacheRefresh();
+        };
+        exports.use = function(usable) {
+          return resolveDispatcher().use(usable);
+        };
+        exports.useActionState = function(action, initialState, permalink) {
+          return resolveDispatcher().useActionState(
+            action,
+            initialState,
+            permalink
+          );
+        };
+        exports.useCallback = function(callback, deps) {
+          return resolveDispatcher().useCallback(callback, deps);
+        };
+        exports.useContext = function(Context) {
+          var dispatcher = resolveDispatcher();
+          Context.$$typeof === REACT_CONSUMER_TYPE && console.error(
+            "Calling useContext(Context.Consumer) is not supported and will cause bugs. Did you mean to call useContext(Context) instead?"
+          );
+          return dispatcher.useContext(Context);
+        };
+        exports.useDebugValue = function(value, formatterFn) {
+          return resolveDispatcher().useDebugValue(value, formatterFn);
+        };
+        exports.useDeferredValue = function(value, initialValue) {
+          return resolveDispatcher().useDeferredValue(value, initialValue);
+        };
+        exports.useEffect = function(create, deps) {
+          null == create && console.warn(
+            "React Hook useEffect requires an effect callback. Did you forget to pass a callback to the hook?"
+          );
+          return resolveDispatcher().useEffect(create, deps);
+        };
+        exports.useEffectEvent = function(callback) {
+          return resolveDispatcher().useEffectEvent(callback);
+        };
+        exports.useId = function() {
+          return resolveDispatcher().useId();
+        };
+        exports.useImperativeHandle = function(ref, create, deps) {
+          return resolveDispatcher().useImperativeHandle(ref, create, deps);
+        };
+        exports.useInsertionEffect = function(create, deps) {
+          null == create && console.warn(
+            "React Hook useInsertionEffect requires an effect callback. Did you forget to pass a callback to the hook?"
+          );
+          return resolveDispatcher().useInsertionEffect(create, deps);
+        };
+        exports.useLayoutEffect = function(create, deps) {
+          null == create && console.warn(
+            "React Hook useLayoutEffect requires an effect callback. Did you forget to pass a callback to the hook?"
+          );
+          return resolveDispatcher().useLayoutEffect(create, deps);
+        };
+        exports.useMemo = function(create, deps) {
+          return resolveDispatcher().useMemo(create, deps);
+        };
+        exports.useOptimistic = function(passthrough, reducer) {
+          return resolveDispatcher().useOptimistic(passthrough, reducer);
+        };
+        exports.useReducer = function(reducer, initialArg, init) {
+          return resolveDispatcher().useReducer(reducer, initialArg, init);
+        };
+        exports.useRef = function(initialValue) {
+          return resolveDispatcher().useRef(initialValue);
+        };
+        exports.useState = function(initialState) {
+          return resolveDispatcher().useState(initialState);
+        };
+        exports.useSyncExternalStore = function(subscribe, getSnapshot, getServerSnapshot) {
+          return resolveDispatcher().useSyncExternalStore(
+            subscribe,
+            getSnapshot,
+            getServerSnapshot
+          );
+        };
+        exports.useTransition = function() {
+          return resolveDispatcher().useTransition();
+        };
+        exports.version = "19.2.4";
+        "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
+      })();
+    }
+  });
+
+  // ../home/claude/.npm-global/lib/node_modules/react/index.js
+  var require_react = __commonJS({
+    "../home/claude/.npm-global/lib/node_modules/react/index.js"(exports, module) {
+      "use strict";
+      if (false) {
+        module.exports = null;
+      } else {
+        module.exports = require_react_development();
+      }
+    }
+  });
+
+  // ../home/claude/.npm-global/lib/node_modules/react/cjs/react-jsx-runtime.development.js
+  var require_react_jsx_runtime_development = __commonJS({
+    "../home/claude/.npm-global/lib/node_modules/react/cjs/react-jsx-runtime.development.js"(exports) {
+      "use strict";
+      (function() {
+        function getComponentNameFromType(type) {
+          if (null == type) return null;
+          if ("function" === typeof type)
+            return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
+          if ("string" === typeof type) return type;
+          switch (type) {
+            case REACT_FRAGMENT_TYPE:
+              return "Fragment";
+            case REACT_PROFILER_TYPE:
+              return "Profiler";
+            case REACT_STRICT_MODE_TYPE:
+              return "StrictMode";
+            case REACT_SUSPENSE_TYPE:
+              return "Suspense";
+            case REACT_SUSPENSE_LIST_TYPE:
+              return "SuspenseList";
+            case REACT_ACTIVITY_TYPE:
+              return "Activity";
+          }
+          if ("object" === typeof type)
+            switch ("number" === typeof type.tag && console.error(
+              "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
+            ), type.$$typeof) {
+              case REACT_PORTAL_TYPE:
+                return "Portal";
+              case REACT_CONTEXT_TYPE:
+                return type.displayName || "Context";
+              case REACT_CONSUMER_TYPE:
+                return (type._context.displayName || "Context") + ".Consumer";
+              case REACT_FORWARD_REF_TYPE:
+                var innerType = type.render;
+                type = type.displayName;
+                type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
+                return type;
+              case REACT_MEMO_TYPE:
+                return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
+              case REACT_LAZY_TYPE:
+                innerType = type._payload;
+                type = type._init;
+                try {
+                  return getComponentNameFromType(type(innerType));
+                } catch (x) {
+                }
+            }
+          return null;
+        }
+        function testStringCoercion(value) {
+          return "" + value;
+        }
+        function checkKeyStringCoercion(value) {
+          try {
+            testStringCoercion(value);
+            var JSCompiler_inline_result = false;
+          } catch (e) {
+            JSCompiler_inline_result = true;
+          }
+          if (JSCompiler_inline_result) {
+            JSCompiler_inline_result = console;
+            var JSCompiler_temp_const = JSCompiler_inline_result.error;
+            var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value[Symbol.toStringTag] || value.constructor.name || "Object";
+            JSCompiler_temp_const.call(
+              JSCompiler_inline_result,
+              "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
+              JSCompiler_inline_result$jscomp$0
+            );
+            return testStringCoercion(value);
+          }
+        }
+        function getTaskName(type) {
+          if (type === REACT_FRAGMENT_TYPE) return "<>";
+          if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
+            return "<...>";
+          try {
+            var name = getComponentNameFromType(type);
+            return name ? "<" + name + ">" : "<...>";
+          } catch (x) {
+            return "<...>";
+          }
+        }
+        function getOwner() {
+          var dispatcher = ReactSharedInternals.A;
+          return null === dispatcher ? null : dispatcher.getOwner();
+        }
+        function UnknownOwner() {
+          return Error("react-stack-top-frame");
+        }
+        function hasValidKey(config) {
+          if (hasOwnProperty.call(config, "key")) {
+            var getter = Object.getOwnPropertyDescriptor(config, "key").get;
+            if (getter && getter.isReactWarning) return false;
+          }
+          return void 0 !== config.key;
+        }
+        function defineKeyPropWarningGetter(props, displayName) {
+          function warnAboutAccessingKey() {
+            specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
+              "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
+              displayName
+            ));
+          }
+          warnAboutAccessingKey.isReactWarning = true;
+          Object.defineProperty(props, "key", {
+            get: warnAboutAccessingKey,
+            configurable: true
+          });
+        }
+        function elementRefGetterWithDeprecationWarning() {
+          var componentName = getComponentNameFromType(this.type);
+          didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
+            "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
+          ));
+          componentName = this.props.ref;
+          return void 0 !== componentName ? componentName : null;
+        }
+        function ReactElement(type, key, props, owner, debugStack, debugTask) {
+          var refProp = props.ref;
+          type = {
+            $$typeof: REACT_ELEMENT_TYPE,
+            type,
+            key,
+            props,
+            _owner: owner
+          };
+          null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
+            enumerable: false,
+            get: elementRefGetterWithDeprecationWarning
+          }) : Object.defineProperty(type, "ref", { enumerable: false, value: null });
+          type._store = {};
+          Object.defineProperty(type._store, "validated", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: 0
+          });
+          Object.defineProperty(type, "_debugInfo", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: null
+          });
+          Object.defineProperty(type, "_debugStack", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: debugStack
+          });
+          Object.defineProperty(type, "_debugTask", {
+            configurable: false,
+            enumerable: false,
+            writable: true,
+            value: debugTask
+          });
+          Object.freeze && (Object.freeze(type.props), Object.freeze(type));
+          return type;
+        }
+        function jsxDEVImpl(type, config, maybeKey, isStaticChildren, debugStack, debugTask) {
+          var children = config.children;
+          if (void 0 !== children)
+            if (isStaticChildren)
+              if (isArrayImpl(children)) {
+                for (isStaticChildren = 0; isStaticChildren < children.length; isStaticChildren++)
+                  validateChildKeys(children[isStaticChildren]);
+                Object.freeze && Object.freeze(children);
+              } else
+                console.error(
+                  "React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead."
+                );
+            else validateChildKeys(children);
+          if (hasOwnProperty.call(config, "key")) {
+            children = getComponentNameFromType(type);
+            var keys = Object.keys(config).filter(function(k) {
+              return "key" !== k;
+            });
+            isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
+            didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(
+              'A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />',
+              isStaticChildren,
+              children,
+              keys,
+              children
+            ), didWarnAboutKeySpread[children + isStaticChildren] = true);
+          }
+          children = null;
+          void 0 !== maybeKey && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
+          hasValidKey(config) && (checkKeyStringCoercion(config.key), children = "" + config.key);
+          if ("key" in config) {
+            maybeKey = {};
+            for (var propName in config)
+              "key" !== propName && (maybeKey[propName] = config[propName]);
+          } else maybeKey = config;
+          children && defineKeyPropWarningGetter(
+            maybeKey,
+            "function" === typeof type ? type.displayName || type.name || "Unknown" : type
+          );
+          return ReactElement(
+            type,
+            children,
+            maybeKey,
+            getOwner(),
+            debugStack,
+            debugTask
+          );
+        }
+        function validateChildKeys(node) {
+          isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
+        }
+        function isValidElement(object) {
+          return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+        }
+        var React2 = require_react(), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), ReactSharedInternals = React2.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+          return null;
+        };
+        React2 = {
+          react_stack_bottom_frame: function(callStackForError) {
+            return callStackForError();
+          }
+        };
+        var specialPropKeyWarningShown;
+        var didWarnAboutElementRef = {};
+        var unknownOwnerDebugStack = React2.react_stack_bottom_frame.bind(
+          React2,
+          UnknownOwner
+        )();
+        var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
+        var didWarnAboutKeySpread = {};
+        exports.Fragment = REACT_FRAGMENT_TYPE;
+        exports.jsx = function(type, config, maybeKey) {
+          var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
+          return jsxDEVImpl(
+            type,
+            config,
+            maybeKey,
+            false,
+            trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
+            trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
+          );
+        };
+        exports.jsxs = function(type, config, maybeKey) {
+          var trackActualOwner = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
+          return jsxDEVImpl(
+            type,
+            config,
+            maybeKey,
+            true,
+            trackActualOwner ? Error("react-stack-top-frame") : unknownOwnerDebugStack,
+            trackActualOwner ? createTask(getTaskName(type)) : unknownOwnerDebugTask
+          );
+        };
+      })();
+    }
+  });
+
+  // ../home/claude/.npm-global/lib/node_modules/react/jsx-runtime.js
+  var require_jsx_runtime = __commonJS({
+    "../home/claude/.npm-global/lib/node_modules/react/jsx-runtime.js"(exports, module) {
+      "use strict";
+      if (false) {
+        module.exports = null;
+      } else {
+        module.exports = require_react_jsx_runtime_development();
+      }
+    }
+  });
+
+  // app_esbuild.jsx
+  var app_esbuild_exports = {};
+  __export(app_esbuild_exports, {
+    App: () => App,
+    default: () => AppWrapper
+  });
+  var import_react = __toESM(require_react());
+  var import_recharts = __Recharts;
+  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  function AppWrapper() {
+    return null;
+  }
+  var mkIcon = (path, vb) => ({ size = 20, strokeWidth = 2, color = "currentColor", style = {} }) => React.createElement(
+    "svg",
+    { width: size, height: size, viewBox: vb || "0 0 24 24", fill: "none", stroke: color, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round", style, flexShrink: 0 },
+    ...path.map((d, i) => React.createElement("path", { key: i, d }))
+  );
+  var Home = mkIcon(["m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "M9 22V12h6v10"]);
+  var Timer = mkIcon(["M10 2h4", "M12 14l4-4", "M4.6 11a8 8 0 1 0 .4-2"]);
+  var PenLine = mkIcon(["M12 20h9", "M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"]);
+  var History = mkIcon(["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5", "M12 7v5l4 2"]);
+  var MoreHorizontal = mkIcon(["M5 12h.01", "M12 12h.01", "M19 12h.01"]);
+  var BarChart2 = mkIcon(["M18 20V10", "M12 20V4", "M6 20v-6"]);
+  var BookOpen = mkIcon(["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z", "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]);
+  var Settings = mkIcon(["M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z", "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"]);
+  var ChevronLeft = mkIcon(["m15 18-6-6 6-6"]);
+  var ChevronRight = mkIcon(["m9 18 6-6-6-6"]);
+  var Target = mkIcon(["M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z", "M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z", "M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"]);
+  var Play = mkIcon(["m5 3 14 9-14 9V3z"]);
+  var Pause = mkIcon(["M6 4h4v16H6z", "M14 4h4v16h-4z"]);
+  var RotateCcw = mkIcon(["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"]);
+  var Flag = mkIcon(["M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z", "M4 22v-7"]);
+  var Plus = mkIcon(["M5 12h14", "M12 5v14"]);
+  var Image = mkIcon(["M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7", "M16 5h6", "M19 2v6", "M21 15l-5-5L5 21"]);
+  var X = mkIcon(["M18 6 6 18", "M6 6l12 12"]);
+  var Check = mkIcon(["M20 6 9 17l-5-5"]);
+  var AlertTriangle = mkIcon(["m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z", "M12 9v4", "M12 17h.01"]);
+  var TrendingUp = mkIcon(["M22 7 13.5 15.5 8.5 10.5 2 17", "M16 7h6v6"]);
+  var Calendar = mkIcon(["M8 2v4", "M16 2v4", "M3 10h18", "M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11"]);
+  var BookMarked = mkIcon(["M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20", "M9 7l3 3 3-3"]);
+  var Layers = mkIcon(["m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z", "M2 12l8.58 3.91a2 2 0 0 0 1.66 0L20.8 12", "M2 17l8.58 3.91a2 2 0 0 0 1.66 0L20.8 17"]);
+  var Palette = mkIcon(["M12 22C6.49 22 2 17.52 2 12S6.49 2 12 2c5.52 0 10 4.48 10 10 0 1.1-.89 2-2 2h-2.14c-.35 0-.63.28-.63.63 0 .17.07.32.17.44.07.08.11.18.11.28 0 .28-.22.5-.5.5H12", "M8.5 10.5m-1.5 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0", "M12 7m-1.5 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0", "M15.5 10.5m-1.5 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0"]);
+  var FONT_EN = "'DM Sans', sans-serif";
+  var FONT_JP = "'DM Sans','Noto Sans JP','Hiragino Sans',sans-serif";
+  var C = {
+    bg: "#0b1120",
+    bg2: "#111827",
+    bg3: "#1a2235",
+    surface: "#1e2d45",
+    surfaceHi: "#263650",
+    border: "#2a3d5a",
+    borderHi: "#3a5270",
+    text: "#e2e8f0",
+    textSub: "#7a93b4",
+    textMuted: "#4a6080",
+    cyan: "#22d3ee",
+    cyanDim: "#0891b2",
+    cyanGlow: "rgba(34,211,238,0.18)",
+    red: "#f87171",
+    redDim: "#991b1b",
+    redBg: "rgba(248,113,113,0.1)",
+    green: "#4ade80",
+    greenBg: "rgba(74,222,128,0.1)",
+    amber: "#fbbf24"
+  };
+  var DEFAULT_QUALIFICATIONS = [
+    { id: "q1", name: "\u7C3F\u8A183\u7D1A", color: "#22d3ee", subjects: ["\u5546\u696D\u7C3F\u8A18"] },
+    { id: "q2", name: "\u7C3F\u8A182\u7D1A", color: "#818cf8", subjects: ["\u5546\u696D\u7C3F\u8A18", "\u5DE5\u696D\u7C3F\u8A18"] },
+    { id: "q3", name: "\u516C\u8A8D\u4F1A\u8A08\u58EB", color: "#34d399", subjects: ["\u8CA1\u52D9\u4F1A\u8A08", "\u7BA1\u7406\u4F1A\u8A08", "\u4F01\u696D\u6CD5", "\u76E3\u67FB\u8AD6", "\u79DF\u7A0E\u6CD5"] }
+  ];
+  var MATERIAL_TYPES = ["\u30C6\u30AD\u30B9\u30C8", "\u554F\u984C\u96C6", "\u904E\u53BB\u554F", "\u7B54\u7DF4", "\u6A21\u8A66", "\u305D\u306E\u4ED6"];
+  var PALETTE = ["#22d3ee", "#818cf8", "#34d399", "#f472b6", "#fbbf24", "#60a5fa", "#a78bfa", "#fb923c"];
+  var getToday = () => (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  var getWeekStart = () => {
+    const d = /* @__PURE__ */ new Date();
+    d.setDate(d.getDate() - (d.getDay() === 0 ? 6 : d.getDay() - 1));
+    return d.toISOString().split("T")[0];
+  };
+  var fmtMin = (m) => {
+    if (!m) return "0\u5206";
+    const h = Math.floor(m / 60), r = m % 60;
+    return h ? r ? `${h}h${r}m` : `${h}h` : `${r}m`;
+  };
+  var fmtSec = (s) => `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor(s % 3600 / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  var loadData = (k, d) => {
+    try {
+      const v = localStorage.getItem(k);
+      return v ? JSON.parse(v) : d;
+    } catch {
+      return d;
+    }
+  };
+  var saveData = (k, v) => {
+    try {
+      localStorage.setItem(k, JSON.stringify(v));
+    } catch {
+    }
+  };
+  var fileToBase64 = (f) => new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(f);
+  });
+  var base = {
+    touchAction: "manipulation",
+    WebkitTapHighlightColor: "transparent",
+    fontFamily: FONT_JP
+  };
+  var card = {
+    ...base,
+    background: C.surface,
+    border: `1px solid ${C.border}`,
+    borderRadius: "16px",
+    padding: "18px",
+    marginBottom: "12px"
+  };
+  var inputStyle = {
+    width: "100%",
+    padding: "13px 14px",
+    background: C.bg3,
+    border: `1.5px solid ${C.border}`,
+    borderRadius: "10px",
+    fontSize: "16px",
+    color: C.text,
+    fontFamily: FONT_JP,
+    outline: "none",
+    boxSizing: "border-box",
+    WebkitAppearance: "none"
+  };
+  var btnPrimary = {
+    ...base,
+    width: "100%",
+    minHeight: "48px",
+    background: `linear-gradient(135deg, ${C.cyanDim}, ${C.cyan})`,
+    color: C.bg,
+    border: "none",
+    borderRadius: "12px",
+    padding: "14px 24px",
+    fontSize: "15px",
+    fontWeight: "700",
+    cursor: "pointer",
+    boxShadow: `0 0 20px ${C.cyanGlow}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px"
+  };
+  var btnGhost = {
+    ...base,
+    minHeight: "44px",
+    background: "transparent",
+    border: `1.5px solid ${C.border}`,
+    color: C.textSub,
+    borderRadius: "10px",
+    padding: "11px 18px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer"
+  };
+  var btnDanger = {
+    ...base,
+    minHeight: "36px",
+    background: C.redBg,
+    color: C.red,
+    border: `1px solid ${C.redDim}`,
+    borderRadius: "8px",
+    padding: "8px 14px",
+    fontSize: "13px",
+    cursor: "pointer"
+  };
+  var labelStyle = {
+    display: "block",
+    fontSize: "11px",
+    fontWeight: "700",
+    color: C.textMuted,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase",
+    marginBottom: "7px"
+  };
+  var successBox = { background: C.greenBg, border: `1px solid ${C.green}33`, borderRadius: "10px", padding: "12px 15px", fontSize: "14px", color: C.green, fontWeight: "600", marginBottom: "12px", fontFamily: FONT_JP };
+  var errorBox = { background: C.redBg, border: `1px solid ${C.red}33`, borderRadius: "10px", padding: "12px 15px", fontSize: "14px", color: C.red, marginBottom: "12px", fontFamily: FONT_JP };
+  var infoBox = { background: C.cyanGlow, border: `1px solid ${C.cyan}33`, borderRadius: "10px", padding: "12px 15px", fontSize: "14px", color: C.cyan, marginBottom: "12px", fontFamily: FONT_JP };
+  var Card = ({ icon: Icon, title, children, style, action, accentColor }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card, ...style, ...accentColor ? { borderLeft: `3px solid ${accentColor}` } : {} }, children: [
+    (Icon || title) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px", paddingBottom: "12px", borderBottom: `1px solid ${C.border}` }, children: [
+      Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color: accentColor || C.cyan }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 18, strokeWidth: 2 }) }),
+      title && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontSize: "14px", fontWeight: "700", color: C.text, margin: 0, fontFamily: FONT_JP, flex: 1 }, children: title }),
+      action
+    ] }),
+    children
+  ] });
+  var FG = ({ label, children, style }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginBottom: "14px", ...style }, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { style: labelStyle, children: label }),
+    children
+  ] });
+  var QBadge = ({ qual, size = "sm" }) => qual ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: {
+    background: qual.color + "22",
+    color: qual.color,
+    border: `1px solid ${qual.color}44`,
+    borderRadius: "6px",
+    padding: size === "sm" ? "3px 9px" : "5px 13px",
+    fontSize: size === "sm" ? "11px" : "13px",
+    fontWeight: "700",
+    display: "inline-block",
+    whiteSpace: "nowrap",
+    fontFamily: FONT_JP
+  }, children: qual.name }) : null;
+  var BottomSheet = ({ open, onClose, onNavigate }) => {
+    if (!open) return null;
+    const items = [
+      { id: "charts", Icon: BarChart2, label: "\u30B0\u30E9\u30D5", desc: "\u52C9\u5F37\u6642\u9593\u306E\u53EF\u8996\u5316" },
+      { id: "materials", Icon: BookMarked, label: "\u6559\u6750\u7BA1\u7406", desc: "\u6559\u6750\u306E\u767B\u9332\u30FB\u4E00\u89A7" },
+      { id: "settings", Icon: Settings, label: "\u8CC7\u683C\u8A2D\u5B9A", desc: "\u8CC7\u683C\u30FB\u79D1\u76EE\u306E\u7BA1\u7406" }
+    ];
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { onClick: onClose, style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 40, backdropFilter: "blur(4px)" } }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, border: `1px solid ${C.border}`, borderRadius: "22px 22px 0 0", padding: `10px 0 calc(18px + env(safe-area-inset-bottom))`, zIndex: 50, boxShadow: `0 -8px 40px rgba(0,0,0,0.5)`, animation: "slideUp 0.22s cubic-bezier(0.32,0.72,0,1)" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "36px", height: "4px", background: C.border, borderRadius: "99px", margin: "0 auto 18px" } }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { padding: "0 16px 10px", fontSize: "10px", fontWeight: "700", color: C.textMuted, letterSpacing: "0.12em" }, children: "MENU" }),
+        items.map(({ id, Icon, label, desc }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { onClick: () => {
+          onNavigate(id);
+          onClose();
+        }, style: { ...base, display: "flex", alignItems: "center", gap: "16px", width: "100%", padding: "15px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "44px", height: "44px", background: C.bg3, border: `1px solid ${C.border}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", color: C.cyan, flexShrink: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 20, strokeWidth: 1.5 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "16px", fontWeight: "700", color: C.text, fontFamily: FONT_JP }, children: label }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "12px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }, children: desc })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { size: 16, color: C.textMuted })
+        ] }, id))
+      ] })
+    ] });
+  };
+  var DashboardTab = ({ studyLogs, materials, qualifications, mainQualId, onSetMain }) => {
+    const today = getToday();
+    const weekStart = getWeekStart();
+    const todayMin = (0, import_react.useMemo)(() => studyLogs.filter((l) => l.date === today).reduce((s, l) => s + l.minutes, 0), [studyLogs, today]);
+    const weekMin = (0, import_react.useMemo)(() => studyLogs.filter((l) => l.date >= weekStart).reduce((s, l) => s + l.minutes, 0), [studyLogs, weekStart]);
+    const totalMin = (0, import_react.useMemo)(() => studyLogs.reduce((s, l) => s + l.minutes, 0), [studyLogs]);
+    const mainQual = qualifications.find((q) => q.id === mainQualId);
+    const todayLogs = (0, import_react.useMemo)(() => studyLogs.filter((l) => l.date === today).slice(0, 8), [studyLogs, today]);
+    const StatCard = ({ label, value, Icon, color }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: C.bg3, border: `1px solid ${C.border}`, borderRadius: "14px", padding: "16px 14px", position: "relative", overflow: "hidden" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "absolute", top: "-10px", right: "-10px", opacity: 0.07 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 64, strokeWidth: 1, color }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color, marginBottom: "8px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 16, strokeWidth: 2 }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "22px", fontWeight: "800", color: C.text, letterSpacing: "-0.03em", fontFamily: FONT_EN }, children: value }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "11px", color: C.textMuted, marginTop: "3px", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: FONT_EN }, children: label })
+    ] });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { icon: Target, title: "\u30E1\u30A4\u30F3\u8CC7\u683C", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: mainQual ? "12px" : 0 }, children: qualifications.map((q) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => onSetMain(q.id), style: { ...base, padding: "9px 16px", borderRadius: "10px", fontSize: "13px", fontWeight: mainQualId === q.id ? "700" : "500", border: `1.5px solid ${mainQualId === q.id ? q.color : C.border}`, background: mainQualId === q.id ? q.color + "22" : "transparent", color: mainQualId === q.id ? q.color : C.textSub, minHeight: "40px", cursor: "pointer", fontFamily: FONT_JP }, children: q.name }, q.id)) }),
+        mainQual && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...infoBox, marginBottom: 0, borderColor: mainQual.color + "44", color: mainQual.color, background: mainQual.color + "18", borderLeft: `3px solid ${mainQual.color}` }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: mainQual.name }),
+          " \u3092\u96C6\u4E2D\u52C9\u5F37\u4E2D\uFF01"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatCard, { label: "TODAY", value: fmtMin(todayMin), Icon: Calendar, color: C.cyan }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatCard, { label: "THIS WEEK", value: fmtMin(weekMin), Icon: TrendingUp, color: "#818cf8" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: `linear-gradient(135deg, ${C.cyanDim}33, ${C.cyan}22)`, border: `1px solid ${C.cyan}33`, borderRadius: "14px", padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "10px", color: C.cyan, fontWeight: "700", letterSpacing: "0.12em", fontFamily: FONT_EN, marginBottom: "4px" }, children: "TOTAL" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "30px", fontWeight: "800", color: C.text, letterSpacing: "-0.03em", fontFamily: FONT_EN }, children: fmtMin(totalMin) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: "12px", color: C.textSub, marginTop: "3px", fontFamily: FONT_JP }, children: [
+            studyLogs.length,
+            "\u4EF6\u306E\u8A18\u9332"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Layers, { size: 40, color: C.cyan, strokeWidth: 1, style: { opacity: 0.3 } })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { icon: PenLine, title: "\u4ECA\u65E5\u306E\u8A18\u9332", children: todayLogs.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { textAlign: "center", padding: "28px 0", color: C.textMuted, fontSize: "14px", fontFamily: FONT_JP }, children: "\u4ECA\u65E5\u306F\u307E\u3060\u8A18\u9332\u304C\u3042\u308A\u307E\u305B\u3093" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "8px" }, children: todayLogs.map((log) => {
+        const mat = materials.find((m) => m.id === log.materialId);
+        const q = mat ? qualifications.find((q2) => q2.id === mat.qualId) : null;
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", background: C.bg3, borderRadius: "10px", border: `1px solid ${C.border}` }, children: [
+          mat?.imageBase64 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: mat.imageBase64, alt: "", style: { width: "36px", height: "36px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "36px", height: "36px", background: q ? q.color + "22" : C.surface, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, { size: 16, color: q?.color || C.textMuted }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "700", fontSize: "13px", color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: FONT_JP }, children: mat?.name || "\u2014" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "11px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }, children: log.content || mat?.subject || "\u2014" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "800", fontSize: "14px", color: C.cyan, flexShrink: 0, fontFamily: FONT_EN }, children: fmtMin(log.minutes) })
+        ] }, log.id);
+      }) }) })
+    ] });
+  };
+  var TimerTab = ({ qualifications, materials, onLogFromTimer }) => {
+    const [swSec, setSwSec] = (0, import_react.useState)(0);
+    const [swRunning, setSwRunning] = (0, import_react.useState)(false);
+    const [swLaps, setSwLaps] = (0, import_react.useState)([]);
+    const swRef = (0, import_react.useRef)(null);
+    const [timerInput, setTimerInput] = (0, import_react.useState)({ h: "0", m: "25", s: "0" });
+    const [timerSec, setTimerSec] = (0, import_react.useState)(0);
+    const [timerRunning, setTimerRunning] = (0, import_react.useState)(false);
+    const [timerDone, setTimerDone] = (0, import_react.useState)(false);
+    const timerRef = (0, import_react.useRef)(null);
+    const [saveForm, setSaveForm] = (0, import_react.useState)({ materialId: "", content: "" });
+    const [saveMsg, setSaveMsg] = (0, import_react.useState)("");
+    const [mode, setMode] = (0, import_react.useState)("sw");
+    const swStart = () => {
+      if (swRunning) return;
+      setSwRunning(true);
+      swRef.current = setInterval(() => setSwSec((s) => s + 1), 1e3);
+    };
+    const swStop = () => {
+      setSwRunning(false);
+      clearInterval(swRef.current);
+    };
+    const swReset = () => {
+      swStop();
+      setSwSec(0);
+      setSwLaps([]);
+    };
+    const swLap = () => {
+      if (swRunning) setSwLaps((p) => [...p, swSec]);
+    };
+    const timerSet = () => {
+      const t = (parseInt(timerInput.h) || 0) * 3600 + (parseInt(timerInput.m) || 0) * 60 + (parseInt(timerInput.s) || 0);
+      if (!t) return;
+      setTimerSec(t);
+      setTimerDone(false);
+      clearInterval(timerRef.current);
+      setTimerRunning(false);
+    };
+    const timerStart = () => {
+      if (timerRunning || timerSec <= 0) return;
+      setTimerRunning(true);
+      setTimerDone(false);
+      timerRef.current = setInterval(() => setTimerSec((s) => {
+        if (s <= 1) {
+          clearInterval(timerRef.current);
+          setTimerRunning(false);
+          setTimerDone(true);
+          return 0;
+        }
+        return s - 1;
+      }), 1e3);
+    };
+    const timerStop = () => {
+      setTimerRunning(false);
+      clearInterval(timerRef.current);
+    };
+    const timerReset = () => {
+      timerStop();
+      setTimerSec(0);
+      setTimerDone(false);
+    };
+    (0, import_react.useEffect)(() => () => {
+      clearInterval(swRef.current);
+      clearInterval(timerRef.current);
+    }, []);
+    const timerTotal = (parseInt(timerInput.h) || 0) * 3600 + (parseInt(timerInput.m) || 0) * 60 + (parseInt(timerInput.s) || 0);
+    const timerProgress = timerTotal > 0 ? (timerTotal - timerSec) / timerTotal : 0;
+    const handleSaveLog = () => {
+      if (!saveForm.materialId) {
+        setSaveMsg("err:\u6559\u6750\u3092\u9078\u3093\u3067\u304F\u3060\u3055\u3044");
+        return;
+      }
+      if (swSec < 60) {
+        setSaveMsg("err:1\u5206\u4EE5\u4E0A\u8A08\u6E2C\u3057\u3066\u304B\u3089\u4FDD\u5B58\u3057\u3066\u304F\u3060\u3055\u3044");
+        return;
+      }
+      onLogFromTimer({ id: Date.now(), date: getToday(), materialId: Number(saveForm.materialId), content: saveForm.content || "\u30B9\u30C8\u30C3\u30D7\u30A6\u30A9\u30C3\u30C1\u3067\u8A08\u6E2C", minutes: Math.round(swSec / 60) });
+      setSaveMsg("ok:\u8A18\u9332\u3057\u307E\u3057\u305F\uFF01");
+      swReset();
+      setTimeout(() => setSaveMsg(""), 3e3);
+    };
+    const ModeBtn = ({ id, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setMode(id), style: { ...base, flex: 1, padding: "11px", border: "none", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: mode === id ? "700" : "500", background: mode === id ? C.cyan : "transparent", color: mode === id ? C.bg : C.textSub, fontFamily: FONT_JP, transition: "all 0.18s" }, children: label });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", background: C.bg3, borderRadius: "14px", padding: "4px", marginBottom: "12px", border: `1px solid ${C.border}` }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ModeBtn, { id: "sw", label: "\u30B9\u30C8\u30C3\u30D7\u30A6\u30A9\u30C3\u30C1" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ModeBtn, { id: "timer", label: "\u30BF\u30A4\u30DE\u30FC" })
+      ] }),
+      mode === "sw" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "center", padding: "16px 0 8px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "clamp(60px,18vw,88px)", fontWeight: "800", letterSpacing: "-0.05em", fontFamily: FONT_EN, lineHeight: 1, color: swRunning ? C.cyan : C.text, transition: "color 0.3s", textShadow: swRunning ? `0 0 40px ${C.cyanGlow}` : "none" }, children: fmtSec(swSec) }),
+          swRunning && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", justifyContent: "center", gap: "5px", marginTop: "14px" }, children: [0, 1, 2].map((i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "7px", height: "7px", borderRadius: "50%", background: C.cyan, animation: `asmPulse 1.2s ease-in-out ${i * 0.3}s infinite` } }, i)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "8px", marginTop: "20px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: swRunning ? swStop : swStart, style: { ...btnPrimary, background: swRunning ? `linear-gradient(135deg,#991b1b,${C.red})` : btnPrimary.background, boxShadow: swRunning ? "0 0 20px rgba(248,113,113,0.2)" : btnPrimary.boxShadow }, children: swRunning ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pause, { size: 18, strokeWidth: 2.5 }),
+            " \u505C\u6B62"
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Play, { size: 18, strokeWidth: 2.5, fill: "currentColor" }),
+            " ",
+            swSec > 0 ? "\u518D\u958B" : "START"
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: swLap, disabled: !swRunning, style: { ...btnGhost, opacity: swRunning ? 1 : 0.4, display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Flag, { size: 16, strokeWidth: 2 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: swReset, style: { ...btnGhost, display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RotateCcw, { size: 16, strokeWidth: 2 }) })
+        ] }),
+        swLaps.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.bg3, border: `1px solid ${C.border}`, borderRadius: "10px", padding: "10px", maxHeight: "150px", overflowY: "auto", marginTop: "14px" }, children: swLaps.map((lap, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", padding: "6px 4px", borderBottom: `1px solid ${C.border}`, fontSize: "13px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: C.textMuted, fontFamily: FONT_EN }, children: [
+            "Lap ",
+            i + 1
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontWeight: "700", color: C.text, fontFamily: FONT_EN }, children: fmtSec(lap) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { style: { color: C.textMuted, fontFamily: FONT_EN }, children: [
+            "+",
+            fmtSec(lap - (i > 0 ? swLaps[i - 1] : 0))
+          ] })
+        ] }, i)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { borderTop: `1px solid ${C.border}`, marginTop: "18px", paddingTop: "16px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: "12px", fontWeight: "700", color: C.textMuted, letterSpacing: "0.08em", marginBottom: "12px", fontFamily: FONT_JP, textTransform: "uppercase" }, children: "\u8A08\u6E2C\u3057\u305F\u6642\u9593\u3092\u8A18\u9332\u306B\u4FDD\u5B58" }),
+          saveMsg && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: saveMsg.startsWith("err") ? errorBox : successBox, children: saveMsg.slice(3) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u6559\u6750", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { style: inputStyle, value: saveForm.materialId, onChange: (e) => setSaveForm((p) => ({ ...p, materialId: e.target.value })), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u6559\u6750\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044" }),
+            qualifications.map((q) => {
+              const mats = materials.filter((m) => m.qualId === q.id);
+              if (!mats.length) return null;
+              return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("optgroup", { label: `\u2500\u2500 ${q.name} \u2500\u2500`, children: mats.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: m.id, children: [
+                m.subject,
+                " / ",
+                m.name
+              ] }, m.id)) }, q.id);
+            })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u52C9\u5F37\u5185\u5BB9\uFF08\u4EFB\u610F\uFF09", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { style: inputStyle, placeholder: "\u4F8B: \u7B2C3\u7AE0", value: saveForm.content, onChange: (e) => setSaveForm((p) => ({ ...p, content: e.target.value })) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { style: btnPrimary, onClick: handleSaveLog, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { size: 16, strokeWidth: 2.5 }),
+            " \u8A18\u9332\u306B\u4FDD\u5B58\uFF08",
+            Math.round(swSec / 60),
+            "\u5206\uFF09"
+          ] })
+        ] })
+      ] }),
+      mode === "timer" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card }, children: [
+        timerDone && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: C.amber + "22", border: `1px solid ${C.amber}44`, borderRadius: "12px", padding: "16px", textAlign: "center", fontSize: "16px", fontWeight: "700", color: C.amber, marginBottom: "16px", fontFamily: FONT_JP }, children: "\u6642\u9593\u306B\u306A\u308A\u307E\u3057\u305F\uFF01\u304A\u75B2\u308C\u69D8\u3067\u3057\u305F\uFF01" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { ...labelStyle, marginBottom: "10px" }, children: "QUICK SET" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "8px", marginBottom: "18px" }, children: [5, 10, 25, 30, 45, 60].map((min) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "button",
+          {
+            onClick: () => {
+              setTimerInput({ h: "0", m: String(min), s: "0" });
+              setTimerSec(min * 60);
+              setTimerDone(false);
+              clearInterval(timerRef.current);
+              setTimerRunning(false);
+            },
+            style: { ...btnGhost, padding: "12px", fontSize: "14px", fontWeight: "700", fontFamily: FONT_EN },
+            children: [
+              min,
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "11px", fontFamily: FONT_JP, fontWeight: "500" }, children: "\u5206" })
+            ]
+          },
+          min
+        )) }),
+        timerSec > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { textAlign: "center", margin: "8px 0 14px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "clamp(56px,16vw,80px)", fontWeight: "800", letterSpacing: "-0.05em", fontFamily: FONT_EN, lineHeight: 1, color: timerDone ? C.amber : timerRunning ? C.cyan : C.text, transition: "color 0.3s", textShadow: timerRunning ? `0 0 40px ${C.cyanGlow}` : "none" }, children: fmtSec(timerSec) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { position: "relative", width: "120px", margin: "0 auto 16px" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { width: "120", height: "8", style: { display: "block" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "0", y: "0", width: "120", height: "8", rx: "4", fill: C.bg3 }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { x: "0", y: "0", width: `${timerProgress * 120}`, height: "8", rx: "4", fill: timerDone ? C.amber : C.cyan, style: { transition: "width 1s linear" } })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "center", fontSize: "11px", color: C.textMuted, marginTop: "6px", fontFamily: FONT_EN }, children: [
+              Math.round(timerProgress * 100),
+              "% elapsed"
+            ] })
+          ] })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px", justifyContent: "center", marginBottom: "18px" }, children: [
+          [{ key: "h", label: "\u6642" }, { key: "m", label: "\u5206" }, { key: "s", label: "\u79D2" }].map(({ key, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { textAlign: "center" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "11px", color: C.textMuted, marginBottom: "4px", fontFamily: FONT_JP }, children: label }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "number", min: "0", max: "99", style: { ...inputStyle, width: "68px", textAlign: "center", fontSize: "22px", fontWeight: "800", padding: "10px 4px", fontFamily: FONT_EN }, value: timerInput[key], onChange: (e) => setTimerInput((p) => ({ ...p, [key]: e.target.value })) })
+          ] }, key)),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { alignSelf: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnGhost, padding: "13px 16px", fontFamily: FONT_JP }, onClick: timerSet, children: "\u30BB\u30C3\u30C8" }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "grid", gridTemplateColumns: "2fr 1fr", gap: "8px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnPrimary, opacity: timerSec === 0 ? 0.4 : 1 }, onClick: timerRunning ? timerStop : timerStart, disabled: timerSec === 0, children: timerRunning ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pause, { size: 16, strokeWidth: 2.5 }),
+            " \u505C\u6B62"
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Play, { size: 16, strokeWidth: 2.5, fill: "currentColor" }),
+            " \u30B9\u30BF\u30FC\u30C8"
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnGhost, display: "flex", alignItems: "center", justifyContent: "center" }, onClick: timerReset, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RotateCcw, { size: 16, strokeWidth: 2 }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("style", { children: `
+        @keyframes asmPulse{0%,100%{transform:scale(0.75);opacity:0.3}50%{transform:scale(1.2);opacity:1}}
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        select option { background: #1e2d45; color: #e2e8f0; }
+        input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+        input::placeholder { color: #4a6080; }
+        select { color: #e2e8f0; }
+      ` })
+    ] });
+  };
+  var RecordTab = ({ materials, qualifications, onAdd }) => {
+    const [form, setForm] = (0, import_react.useState)({ date: getToday(), materialId: "", content: "", minutes: "" });
+    const [msg, setMsg] = (0, import_react.useState)({ type: "", text: "" });
+    const handleSubmit = () => {
+      if (!form.materialId) {
+        setMsg({ type: "error", text: "\u6559\u6750\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044" });
+        return;
+      }
+      if (!form.minutes || +form.minutes <= 0) {
+        setMsg({ type: "error", text: "\u52C9\u5F37\u6642\u9593\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044" });
+        return;
+      }
+      onAdd({ id: Date.now(), ...form, materialId: Number(form.materialId), minutes: Number(form.minutes) });
+      setForm((p) => ({ ...p, content: "", minutes: "" }));
+      setMsg({ type: "success", text: "\u8A18\u9332\u3057\u307E\u3057\u305F\uFF01\u304A\u75B2\u308C\u69D8\u3067\u3057\u305F\uFF01" });
+      setTimeout(() => setMsg({ type: "", text: "" }), 3e3);
+    };
+    const selectedMat = materials.find((m) => m.id === Number(form.materialId));
+    const selectedQ = selectedMat ? qualifications.find((q) => q.id === selectedMat.qualId) : null;
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card }, children: [
+      materials.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: infoBox, children: "\u5148\u306B\u300C\u6559\u6750\u7BA1\u7406\u300D\u3067\u6559\u6750\u3092\u767B\u9332\u3057\u3066\u304F\u3060\u3055\u3044\uFF08\u30E1\u30CB\u30E5\u30FC\u304B\u3089\uFF09" }),
+      msg.text && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: msg.type === "error" ? errorBox : successBox, children: msg.text }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u65E5\u4ED8", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "date", style: inputStyle, value: form.date, onChange: (e) => setForm((p) => ({ ...p, date: e.target.value })) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u6559\u6750", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { style: inputStyle, value: form.materialId, onChange: (e) => setForm((p) => ({ ...p, materialId: e.target.value })), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u6559\u6750\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044" }),
+        qualifications.map((q) => {
+          const mats = materials.filter((m) => m.qualId === q.id);
+          if (!mats.length) return null;
+          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("optgroup", { label: `\u2500\u2500 ${q.name} \u2500\u2500`, children: mats.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: m.id, children: [
+            m.subject,
+            " / ",
+            m.name
+          ] }, m.id)) }, q.id);
+        })
+      ] }) }),
+      selectedMat && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...infoBox, display: "flex", gap: "10px", alignItems: "center", borderColor: selectedQ?.color + "44" || C.cyan + "44", color: C.text, background: selectedQ ? selectedQ.color + "18" : C.cyanGlow }, children: [
+        selectedMat.imageBase64 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: selectedMat.imageBase64, alt: "", style: { width: "40px", height: "40px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 } }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "700", fontFamily: FONT_JP }, children: selectedMat.name }),
+          selectedQ && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QBadge, { qual: selectedQ })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u52C9\u5F37\u5185\u5BB9\uFF08\u4EFB\u610F\uFF09", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { style: inputStyle, placeholder: "\u4F8B: \u7B2C3\u7AE0 \u4ED5\u8A33\u306E\u57FA\u790E", value: form.content, onChange: (e) => setForm((p) => ({ ...p, content: e.target.value })) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FG, { label: "\u6642\u9593\uFF08\u5206\uFF09", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "number", min: "1", style: { ...inputStyle, fontSize: "24px", fontWeight: "800", textAlign: "center", fontFamily: FONT_EN }, placeholder: "60", value: form.minutes, onChange: (e) => setForm((p) => ({ ...p, minutes: e.target.value })) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: "6px", marginTop: "8px" }, children: [15, 30, 45, 60, 90, 120].map((min) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setForm((p) => ({ ...p, minutes: String(min) })), style: { ...btnGhost, padding: "8px 4px", fontSize: "13px", minHeight: "36px", fontFamily: FONT_EN, fontWeight: "700" }, children: min }, min)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { style: { ...btnPrimary, opacity: materials.length === 0 ? 0.4 : 1 }, onClick: handleSubmit, disabled: materials.length === 0, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { size: 18, strokeWidth: 2.5 }),
+        " \u8A18\u9332\u3059\u308B"
+      ] })
+    ] });
+  };
+  var HistoryTab = ({ studyLogs, materials, qualifications, onDelete }) => {
+    const [filterQualId, setFilterQualId] = (0, import_react.useState)("");
+    const [deleteId, setDeleteId] = (0, import_react.useState)(null);
+    const filtered = (0, import_react.useMemo)(() => {
+      if (!filterQualId) return studyLogs;
+      return studyLogs.filter((l) => materials.find((m) => m.id === l.materialId)?.qualId === filterQualId);
+    }, [studyLogs, materials, filterQualId]);
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px", marginBottom: "12px", WebkitOverflowScrolling: "touch" }, children: [{ id: "", label: `\u3059\u3079\u3066 (${studyLogs.length})`, color: C.cyan }, ...qualifications.map((q) => ({ id: q.id, label: `${q.name} (${studyLogs.filter((l) => materials.find((m) => m.id === l.materialId)?.qualId === q.id).length})`, color: q.color }))].map((f) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setFilterQualId(f.id), style: { ...base, whiteSpace: "nowrap", fontSize: "12px", padding: "8px 14px", minHeight: "36px", borderRadius: "8px", cursor: "pointer", border: `1.5px solid ${filterQualId === f.id ? f.color : C.border}`, background: filterQualId === f.id ? f.color + "22" : "transparent", color: filterQualId === f.id ? f.color : C.textMuted, fontWeight: filterQualId === f.id ? "700" : "500", flexShrink: 0, fontFamily: FONT_JP }, children: f.label }, f.id)) }),
+      filtered.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { ...card, textAlign: "center", padding: "32px 0", color: C.textMuted, fontFamily: FONT_JP }, children: "\u8A18\u9332\u304C\u3042\u308A\u307E\u305B\u3093" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "8px" }, children: filtered.map((log) => {
+        const mat = materials.find((m) => m.id === log.materialId);
+        const q = mat ? qualifications.find((q2) => q2.id === mat.qualId) : null;
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card, padding: "14px 16px", marginBottom: 0 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "12px" }, children: [
+            mat?.imageBase64 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: mat.imageBase64, alt: "", style: { width: "42px", height: "42px", objectFit: "cover", borderRadius: "8px", flexShrink: 0 } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "42px", height: "42px", background: q ? q.color + "22" : C.bg3, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, { size: 18, color: q?.color || C.textMuted }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "700", fontSize: "14px", color: C.text, fontFamily: FONT_JP }, children: mat?.name || "\u2014" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: "12px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }, children: [
+                    log.date,
+                    " \xB7 ",
+                    log.content || mat?.subject || "\u2014"
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "800", fontSize: "15px", color: C.cyan, flexShrink: 0, fontFamily: FONT_EN }, children: fmtMin(log.minutes) })
+              ] }),
+              q && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { marginTop: "6px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QBadge, { qual: q }) })
+            ] })
+          ] }),
+          deleteId === log.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { marginTop: "10px", background: C.redBg, borderRadius: "10px", padding: "10px 12px", border: `1px solid ${C.red}33` }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: "13px", color: C.red, fontWeight: "700", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px", fontFamily: FONT_JP }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AlertTriangle, { size: 14 }),
+              "\u3053\u306E\u8A18\u9332\u3092\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F\u5143\u306B\u623B\u305B\u307E\u305B\u3093\u3002"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnDanger, minHeight: "38px", width: "auto", padding: "8px 20px", fontWeight: "700", fontFamily: FONT_JP }, onClick: () => {
+                onDelete(log.id);
+                setDeleteId(null);
+              }, children: "\u524A\u9664\u3059\u308B" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnGhost, minHeight: "38px", width: "auto", padding: "8px 16px", fontSize: "13px", fontFamily: FONT_JP }, onClick: () => setDeleteId(null), children: "\u30AD\u30E3\u30F3\u30BB\u30EB" })
+            ] })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnDanger, marginTop: "8px", fontSize: "12px", minHeight: "32px", fontFamily: FONT_JP }, onClick: () => setDeleteId(log.id), children: "\u524A\u9664" })
+        ] }, log.id);
+      }) })
+    ] });
+  };
+  var ChartsTab = ({ studyLogs, materials, qualifications }) => {
+    const noData = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { textAlign: "center", padding: "36px 0", color: C.textMuted, fontSize: "14px", fontFamily: FONT_JP }, children: "\u30C7\u30FC\u30BF\u304C\u3042\u308A\u307E\u305B\u3093" });
+    const Tip = ({ active, payload, label }) => active && payload?.length ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: C.bg2, border: `1px solid ${C.border}`, borderRadius: "8px", padding: "9px 13px", fontSize: "13px", boxShadow: "0 4px 20px rgba(0,0,0,0.4)", fontFamily: FONT_JP }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "700", color: C.cyan, marginBottom: "3px" }, children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { color: C.text }, children: fmtMin(payload[0].value) })
+    ] }) : null;
+    const qualData = (0, import_react.useMemo)(() => qualifications.map((q) => ({ name: q.name, color: q.color, \u52C9\u5F37\u6642\u9593: studyLogs.filter((l) => materials.find((m) => m.id === l.materialId)?.qualId === q.id).reduce((s, l) => s + l.minutes, 0) })).filter((d) => d.\u52C9\u5F37\u6642\u9593 > 0), [studyLogs, materials, qualifications]);
+    const subjectData = (0, import_react.useMemo)(() => {
+      const map = {};
+      studyLogs.forEach((l) => {
+        const mat = materials.find((m) => m.id === l.materialId);
+        if (mat) map[mat.subject] = (map[mat.subject] || 0) + l.minutes;
+      });
+      return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
+    }, [studyLogs, materials]);
+    const monthlyData = (0, import_react.useMemo)(() => {
+      const map = {};
+      studyLogs.forEach((l) => {
+        const m = l.date.slice(0, 7);
+        map[m] = (map[m] || 0) + l.minutes;
+      });
+      return Object.entries(map).sort((a, b) => a[0].localeCompare(b[0])).slice(-6).map(([k, v]) => ({ name: k.slice(5) + "\u6708", \u52C9\u5F37\u6642\u9593: v }));
+    }, [studyLogs]);
+    const tickStyle = { fontSize: 11, fill: C.textMuted, fontFamily: FONT_EN };
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { icon: BarChart2, title: "\u8CC7\u683C\u30EC\u30D9\u30EB\u5225 \u52C9\u5F37\u6642\u9593", children: qualData.length === 0 ? noData : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.ResponsiveContainer, { width: "100%", height: 200, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_recharts.BarChart, { data: qualData, margin: { top: 5, right: 5, left: -15, bottom: 5 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.CartesianGrid, { strokeDasharray: "3 3", stroke: C.border }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.XAxis, { dataKey: "name", tick: { ...tickStyle, fontFamily: FONT_JP } }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.YAxis, { tick: tickStyle }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Tooltip, { content: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tip, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Bar, { dataKey: "\u52C9\u5F37\u6642\u9593", radius: [6, 6, 0, 0], children: qualData.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Cell, { fill: d.color }, d.name)) })
+      ] }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { icon: Calendar, title: "\u6708\u5225 \u52C9\u5F37\u6642\u9593\uFF08\u76F4\u8FD16\u30F6\u6708\uFF09", children: monthlyData.length === 0 ? noData : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.ResponsiveContainer, { width: "100%", height: 200, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_recharts.BarChart, { data: monthlyData, margin: { top: 5, right: 5, left: -15, bottom: 5 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.CartesianGrid, { strokeDasharray: "3 3", stroke: C.border }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.XAxis, { dataKey: "name", tick: { ...tickStyle, fontFamily: FONT_JP } }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.YAxis, { tick: tickStyle }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Tooltip, { content: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tip, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Bar, { dataKey: "\u52C9\u5F37\u6642\u9593", fill: C.cyan, radius: [6, 6, 0, 0] })
+      ] }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { icon: Layers, title: "\u79D1\u76EE\u5225 \u5272\u5408", children: subjectData.length === 0 ? noData : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.ResponsiveContainer, { width: "100%", height: 260, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_recharts.PieChart, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Pie, { data: subjectData, cx: "50%", cy: "48%", outerRadius: 80, dataKey: "value", label: ({ percent }) => percent > 0.08 ? `${(percent * 100).toFixed(0)}%` : "", labelLine: false, children: subjectData.map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Cell, { fill: PALETTE[i % PALETTE.length] }, i)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Tooltip, { formatter: (v) => [fmtMin(v), "\u52C9\u5F37\u6642\u9593"], contentStyle: { background: C.bg2, border: `1px solid ${C.border}`, borderRadius: "8px", fontFamily: FONT_JP } }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_recharts.Legend, { formatter: (v) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "12px", fontFamily: FONT_JP, color: C.textSub }, children: v }) })
+      ] }) }) })
+    ] });
+  };
+  var MaterialsTab = ({ materials, qualifications, onAdd, onDelete }) => {
+    const [form, setForm] = (0, import_react.useState)({ qualId: "", subject: "", type: "\u30C6\u30AD\u30B9\u30C8", name: "", imageBase64: "" });
+    const [msg, setMsg] = (0, import_react.useState)({ type: "", text: "" });
+    const [imgPreview, setImgPv] = (0, import_react.useState)("");
+    const [showForm, setShowForm] = (0, import_react.useState)(false);
+    const [deleteMatId, setDeleteMatId] = (0, import_react.useState)(null);
+    const fileRef = (0, import_react.useRef)(null);
+    (0, import_react.useEffect)(() => {
+      if (qualifications.length > 0 && !form.qualId) setForm((p) => ({ ...p, qualId: qualifications[0].id, subject: qualifications[0].subjects[0] || "" }));
+    }, [qualifications]);
+    const handleQualChange = (qualId) => {
+      const q = qualifications.find((q2) => q2.id === qualId);
+      setForm((p) => ({ ...p, qualId, subject: q?.subjects[0] || "" }));
+    };
+    const handleImage = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 500 * 1024) {
+        setMsg({ type: "error", text: "\u753B\u50CF\u306F500KB\u4EE5\u4E0B\u306B\u3057\u3066\u304F\u3060\u3055\u3044" });
+        return;
+      }
+      try {
+        const b64 = await fileToBase64(file);
+        setForm((p) => ({ ...p, imageBase64: b64 }));
+        setImgPv(b64);
+      } catch {
+        setMsg({ type: "error", text: "\u753B\u50CF\u306E\u8AAD\u307F\u8FBC\u307F\u306B\u5931\u6557\u3057\u307E\u3057\u305F" });
+      }
+    };
+    const handleSubmit = () => {
+      if (!form.name.trim()) {
+        setMsg({ type: "error", text: "\u6559\u6750\u540D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044" });
+        return;
+      }
+      if (!form.qualId) {
+        setMsg({ type: "error", text: "\u8CC7\u683C\u30EC\u30D9\u30EB\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044" });
+        return;
+      }
+      if (!form.subject.trim()) {
+        setMsg({ type: "error", text: "\u79D1\u76EE\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044" });
+        return;
+      }
+      onAdd({ id: Date.now(), ...form, name: form.name.trim(), createdAt: getToday() });
+      setForm((p) => ({ ...p, name: "", imageBase64: "" }));
+      setImgPv("");
+      setMsg({ type: "success", text: "\u6559\u6750\u3092\u767B\u9332\u3057\u307E\u3057\u305F\uFF01" });
+      setShowForm(false);
+      setTimeout(() => setMsg({ type: "", text: "" }), 3e3);
+    };
+    const selectedQual = qualifications.find((q) => q.id === form.qualId);
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      msg.text && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: msg.type === "error" ? errorBox : successBox, children: msg.text }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setShowForm((p) => !p), style: { ...btnPrimary, marginBottom: "12px" }, children: showForm ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(X, { size: 16, strokeWidth: 2.5 }),
+        " \u30D5\u30A9\u30FC\u30E0\u3092\u9589\u3058\u308B"
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { size: 16, strokeWidth: 2.5 }),
+        " \u65B0\u3057\u3044\u6559\u6750\u3092\u767B\u9332\u3059\u308B"
+      ] }) }),
+      showForm && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card, marginBottom: "12px" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u8CC7\u683C\u30EC\u30D9\u30EB", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { style: inputStyle, value: form.qualId, onChange: (e) => handleQualChange(e.target.value), children: qualifications.map((q) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: q.id, children: q.name }, q.id)) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u79D1\u76EE", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { style: inputStyle, value: form.subject, onChange: (e) => setForm((p) => ({ ...p, subject: e.target.value })), children: selectedQual?.subjects.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { children: s }, s)) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u6559\u6750\u306E\u7A2E\u985E", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { style: inputStyle, value: form.type, onChange: (e) => setForm((p) => ({ ...p, type: e.target.value })), children: MATERIAL_TYPES.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { children: t }, t)) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u6559\u6750\u540D", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { style: inputStyle, placeholder: "\u4F8B: TAC \u7C3F\u8A183\u7D1A\u30C6\u30AD\u30B9\u30C8", value: form.name, onChange: (e) => setForm((p) => ({ ...p, name: e.target.value })) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(FG, { label: "\u6559\u6750\u306E\u753B\u50CF\uFF08\u4EFB\u610F \xB7 500KB\u4EE5\u4E0B\uFF09", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { onClick: () => fileRef.current?.click(), style: { border: `2px dashed ${C.borderHi}`, borderRadius: "12px", padding: "16px", cursor: "pointer", background: C.bg3, display: "flex", alignItems: "center", gap: "14px", touchAction: "manipulation" }, children: imgPreview ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: imgPreview, alt: "\u30D7\u30EC\u30D3\u30E5\u30FC", style: { width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" } }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "13px", color: C.textSub, fontFamily: FONT_JP }, children: "\u30BF\u30C3\u30D7\u3057\u3066\u5909\u66F4" })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { color: C.textMuted, fontSize: "14px", width: "100%", textAlign: "center", fontFamily: FONT_JP }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Image, { size: 28, style: { margin: "0 auto 6px" }, color: C.textMuted }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+            "\u30BF\u30C3\u30D7\u3057\u3066\u753B\u50CF\u3092\u9078\u629E"
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { ref: fileRef, type: "file", accept: "image/*", style: { display: "none" }, onChange: handleImage })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { style: btnPrimary, onClick: handleSubmit, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { size: 16, strokeWidth: 2.5 }),
+          " \u767B\u9332\u3059\u308B"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { style: { ...labelStyle, marginBottom: "8px" }, children: [
+        "\u767B\u9332\u6E08\u307F\u6559\u6750 \xB7 ",
+        materials.length,
+        "\u4EF6"
+      ] }),
+      materials.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { ...card, textAlign: "center", padding: "28px 0", color: C.textMuted, fontFamily: FONT_JP }, children: "\u6559\u6750\u304C\u307E\u3060\u767B\u9332\u3055\u308C\u3066\u3044\u307E\u305B\u3093" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "8px" }, children: materials.map((m) => {
+        const q = qualifications.find((q2) => q2.id === m.qualId);
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card, padding: "14px", marginBottom: 0, display: "flex", gap: "12px", alignItems: "center" }, children: [
+          m.imageBase64 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: m.imageBase64, alt: m.name, style: { width: "52px", height: "52px", objectFit: "cover", borderRadius: "10px", flexShrink: 0 } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "52px", height: "52px", background: q ? q.color + "22" : C.bg3, borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `1px solid ${q ? q.color + "33" : C.border}` }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, { size: 20, color: q?.color || C.textMuted, strokeWidth: 1.5 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { flex: 1, minWidth: 0 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontWeight: "700", fontSize: "14px", color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: FONT_JP }, children: m.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: "12px", color: C.textMuted, marginTop: "2px", fontFamily: FONT_JP }, children: [
+              m.subject,
+              " \xB7 ",
+              m.type
+            ] }),
+            q && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { marginTop: "5px" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QBadge, { qual: q }) })
+          ] }),
+          deleteMatId === m.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end", flexShrink: 0 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "11px", color: C.red, fontWeight: "700", fontFamily: FONT_JP }, children: "\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "6px" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnDanger, minHeight: "34px", width: "auto", padding: "5px 12px", fontSize: "12px", fontFamily: FONT_JP }, onClick: () => {
+                onDelete(m.id);
+                setDeleteMatId(null);
+              }, children: "\u524A\u9664" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnGhost, minHeight: "34px", width: "auto", padding: "5px 10px", fontSize: "12px", fontFamily: FONT_JP }, onClick: () => setDeleteMatId(null), children: "\u623B\u308B" })
+            ] })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnDanger, flexShrink: 0, fontFamily: FONT_JP }, onClick: () => setDeleteMatId(m.id), children: "\u524A\u9664" })
+        ] }, m.id);
+      }) })
+    ] });
+  };
+  var SettingsTab = ({ qualifications, onUpdateQuals }) => {
+    const [newName, setNewName] = (0, import_react.useState)("");
+    const [newColor, setNewColor] = (0, import_react.useState)("#22d3ee");
+    const [newSubject, setNewSubject] = (0, import_react.useState)({});
+    const [confirmId, setConfirmId] = (0, import_react.useState)(null);
+    const [subjectConfirm, setSubjectConfirm] = (0, import_react.useState)(null);
+    const [msg, setMsg] = (0, import_react.useState)({ type: "", text: "" });
+    const showMsg = (type, text) => {
+      setMsg({ type, text });
+      setTimeout(() => setMsg({ type: "", text: "" }), 3e3);
+    };
+    const addQual = () => {
+      if (!newName.trim()) {
+        showMsg("error", "\u8CC7\u683C\u540D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044");
+        return;
+      }
+      if (qualifications.find((q) => q.name === newName.trim())) {
+        showMsg("error", "\u540C\u3058\u540D\u524D\u304C\u3059\u3067\u306B\u5B58\u5728\u3057\u307E\u3059");
+        return;
+      }
+      onUpdateQuals([...qualifications, { id: `q_${Date.now()}`, name: newName.trim(), color: newColor, subjects: [] }]);
+      setNewName("");
+      showMsg("success", `\u300C${newName}\u300D\u3092\u8FFD\u52A0\u3057\u307E\u3057\u305F`);
+    };
+    const deleteQual = (id) => {
+      onUpdateQuals(qualifications.filter((q) => q.id !== id));
+      setConfirmId(null);
+      showMsg("success", "\u524A\u9664\u3057\u307E\u3057\u305F");
+    };
+    const addSubject = (qid) => {
+      const n = (newSubject[qid] || "").trim();
+      if (!n) {
+        showMsg("error", "\u79D1\u76EE\u540D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044");
+        return;
+      }
+      onUpdateQuals(qualifications.map((q) => {
+        if (q.id !== qid) return q;
+        if (q.subjects.includes(n)) {
+          showMsg("error", "\u540C\u3058\u79D1\u76EE\u540D\u304C\u3059\u3067\u306B\u5B58\u5728\u3057\u307E\u3059");
+          return q;
+        }
+        return { ...q, subjects: [...q.subjects, n] };
+      }));
+      setNewSubject((p) => ({ ...p, [qid]: "" }));
+      showMsg("success", `\u300C${n}\u300D\u3092\u8FFD\u52A0\u3057\u307E\u3057\u305F`);
+    };
+    const deleteSubject = (qid, s) => onUpdateQuals(qualifications.map((q) => q.id === qid ? { ...q, subjects: q.subjects.filter((x) => x !== s) } : q));
+    const changeColor = (qid, c) => onUpdateQuals(qualifications.map((q) => q.id === qid ? { ...q, color: c } : q));
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      msg.text && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: msg.type === "error" ? errorBox : successBox, children: msg.text }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { icon: Plus, title: "\u65B0\u3057\u3044\u8CC7\u683C\u30EC\u30D9\u30EB\u3092\u8FFD\u52A0", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u8CC7\u683C\u540D", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { style: inputStyle, placeholder: "\u4F8B: TOEIC, FP2\u7D1A, \u7A0E\u7406\u58EB", value: newName, onChange: (e) => setNewName(e.target.value), onKeyDown: (e) => e.key === "Enter" && addQual() }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FG, { label: "\u30C6\u30FC\u30DE\u30AB\u30E9\u30FC", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "12px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "color", value: newColor, onChange: (e) => setNewColor(e.target.value), style: { width: "52px", height: "52px", border: `1.5px solid ${C.border}`, borderRadius: "10px", cursor: "pointer", padding: "3px", background: "transparent" } }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "16px", fontWeight: "700", color: newColor, fontFamily: FONT_EN }, children: newColor }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "12px", color: C.textMuted, fontFamily: FONT_JP }, children: "\u30BF\u30C3\u30D7\u3057\u3066\u8272\u3092\u9078\u629E" })
+          ] })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { style: btnPrimary, onClick: addQual, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Plus, { size: 16, strokeWidth: 2.5 }),
+          " \u8CC7\u683C\u30EC\u30D9\u30EB\u3092\u8FFD\u52A0"
+        ] })
+      ] }),
+      qualifications.map((q) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { ...card, borderLeft: `3px solid ${q.color}`, marginBottom: "10px" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "color", value: q.color, onChange: (e) => changeColor(q.id, e.target.value), style: { width: "34px", height: "34px", border: "none", borderRadius: "8px", cursor: "pointer", padding: 0, flexShrink: 0, background: "transparent" }, title: "\u8272\u3092\u5909\u66F4" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "16px", fontWeight: "700", color: q.color, flex: 1, fontFamily: FONT_JP }, children: q.name })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { ...labelStyle, marginBottom: "8px" }, children: "\u767B\u9332\u6E08\u307F\u306E\u79D1\u76EE" }),
+        q.subjects.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: { fontSize: "13px", color: C.textMuted, marginBottom: "12px", fontFamily: FONT_JP }, children: "\u79D1\u76EE\u304C\u307E\u3060\u3042\u308A\u307E\u305B\u3093" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "12px" }, children: q.subjects.map((s) => {
+          const key = `${q.id}::${s}`;
+          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "5px", background: q.color + "22", border: `1px solid ${q.color}44`, borderRadius: "8px", padding: "7px 10px" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "13px", fontWeight: "600", color: q.color, fontFamily: FONT_JP }, children: s }),
+            subjectConfirm === key ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "10px", color: C.red, fontWeight: "700", marginLeft: "3px", fontFamily: FONT_JP }, children: "\u524A\u9664?" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+                deleteSubject(q.id, s);
+                setSubjectConfirm(null);
+              }, style: { ...base, background: C.redBg, border: `1px solid ${C.red}44`, color: C.red, borderRadius: "5px", fontSize: "11px", fontWeight: "700", padding: "2px 7px", cursor: "pointer", fontFamily: FONT_EN }, children: "Yes" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setSubjectConfirm(null), style: { ...base, background: C.bg3, border: `1px solid ${C.border}`, color: C.textSub, borderRadius: "5px", fontSize: "11px", fontWeight: "700", padding: "2px 7px", cursor: "pointer", fontFamily: FONT_EN }, children: "No" })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setSubjectConfirm(key), style: { ...base, background: "none", border: "none", cursor: "pointer", color: C.textMuted, fontSize: "14px", lineHeight: 1, padding: "0 0 0 3px" }, children: "\xD7" })
+          ] }, s);
+        }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px", marginBottom: "14px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { style: { ...inputStyle, flex: 1 }, placeholder: "\u79D1\u76EE\u540D\u3092\u5165\u529B", value: newSubject[q.id] || "", onChange: (e) => setNewSubject((p) => ({ ...p, [q.id]: e.target.value })), onKeyDown: (e) => e.key === "Enter" && addSubject(q.id) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnGhost, width: "auto", padding: "0 16px", whiteSpace: "nowrap", fontFamily: FONT_JP }, onClick: () => addSubject(q.id), children: "+ \u8FFD\u52A0" })
+        ] }),
+        confirmId === q.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { background: C.redBg, borderRadius: "10px", padding: "12px", border: `1px solid ${C.red}33` }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontSize: "13px", color: C.red, fontWeight: "700", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px", fontFamily: FONT_JP }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AlertTriangle, { size: 14 }),
+            "\u300C",
+            q.name,
+            "\u300D\u3092\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", gap: "8px" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnDanger, width: "auto", fontWeight: "700", padding: "9px 20px", fontFamily: FONT_JP }, onClick: () => deleteQual(q.id), children: "\u524A\u9664\u3059\u308B" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnGhost, width: "auto", padding: "9px 16px", fontSize: "13px", fontFamily: FONT_JP }, onClick: () => setConfirmId(null), children: "\u30AD\u30E3\u30F3\u30BB\u30EB" })
+          ] })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { ...btnDanger, width: "auto", fontSize: "13px", fontFamily: FONT_JP }, onClick: () => setConfirmId(q.id), children: "\u3053\u306E\u8CC7\u683C\u30EC\u30D9\u30EB\u3092\u524A\u9664" })
+      ] }, q.id))
+    ] });
+  };
+  function App() {
+    const [qualifications, setQualifications] = (0, import_react.useState)(() => loadData("asm2_quals", DEFAULT_QUALIFICATIONS));
+    const [materials, setMaterials] = (0, import_react.useState)(() => loadData("asm2_mats", []));
+    const [studyLogs, setStudyLogs] = (0, import_react.useState)(() => loadData("asm2_logs", []));
+    const [mainQualId, setMainQualId] = (0, import_react.useState)(() => loadData("asm2_main", "q1"));
+    const [activeTab, setActiveTab] = (0, import_react.useState)("dashboard");
+    const [sheetOpen, setSheetOpen] = (0, import_react.useState)(false);
+    (0, import_react.useEffect)(() => saveData("asm2_quals", qualifications), [qualifications]);
+    (0, import_react.useEffect)(() => saveData("asm2_mats", materials), [materials]);
+    (0, import_react.useEffect)(() => saveData("asm2_logs", studyLogs), [studyLogs]);
+    (0, import_react.useEffect)(() => saveData("asm2_main", mainQualId), [mainQualId]);
+    const addMaterial = (0, import_react.useCallback)((mat) => setMaterials((p) => [...p, mat]), []);
+    const delMaterial = (0, import_react.useCallback)((id) => {
+      setMaterials((p) => p.filter((m) => m.id !== id));
+      setStudyLogs((p) => p.filter((l) => l.materialId !== id));
+    }, []);
+    const addLog = (0, import_react.useCallback)((log) => setStudyLogs((p) => [log, ...p]), []);
+    const delLog = (0, import_react.useCallback)((id) => setStudyLogs((p) => p.filter((l) => l.id !== id)), []);
+    const isSubPage = ["charts", "materials", "settings"].includes(activeTab);
+    const subPageMeta = { charts: { label: "\u30B0\u30E9\u30D5", Icon: BarChart2 }, materials: { label: "\u6559\u6750\u7BA1\u7406", Icon: BookMarked }, settings: { label: "\u8CC7\u683C\u8A2D\u5B9A", Icon: Settings } };
+    const mainQual = qualifications.find((q) => q.id === mainQualId);
+    const TABS = [
+      { id: "dashboard", label: "\u30DB\u30FC\u30E0", Icon: Home },
+      { id: "timer", label: "\u30BF\u30A4\u30DE\u30FC", Icon: Timer },
+      { id: "record", label: "\u8A18\u9332", Icon: PenLine },
+      { id: "history", label: "\u5C65\u6B74", Icon: History },
+      { id: "more", label: "\u30E1\u30CB\u30E5\u30FC", Icon: MoreHorizontal }
+    ];
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { fontFamily: FONT_JP, background: C.bg, minHeight: "100dvh" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("header", { style: { background: C.bg2, borderBottom: `1px solid ${C.border}`, padding: "0 16px", paddingTop: "env(safe-area-inset-top)", position: "sticky", top: 0, zIndex: 20, height: `calc(56px + env(safe-area-inset-top))`, display: "flex", alignItems: "flex-end" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", paddingBottom: "12px" }, children: [
+        isSubPage ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "10px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => setActiveTab("dashboard"), style: { ...base, background: C.bg3, border: `1px solid ${C.border}`, color: C.text, borderRadius: "10px", width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { size: 20, strokeWidth: 2 }) }),
+          (() => {
+            const meta = subPageMeta[activeTab];
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "8px" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(meta.Icon, { size: 16, color: C.cyan }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "16px", fontWeight: "700", color: C.text, fontFamily: FONT_JP }, children: meta.label })
+            ] });
+          })()
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { style: { display: "flex", alignItems: "center", gap: "10px" }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: "32px", height: "32px", background: `linear-gradient(135deg,${C.cyanDim},${C.cyan})`, borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, { size: 16, color: C.bg, strokeWidth: 2.5 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "15px", fontWeight: "800", color: C.text, letterSpacing: "0.01em", fontFamily: FONT_EN, lineHeight: 1 }, children: "Study Manager" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { fontSize: "10px", color: C.textMuted, fontFamily: FONT_EN, letterSpacing: "0.08em" }, children: "ASM" })
+          ] })
+        ] }),
+        mainQual && !isSubPage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { background: mainQual.color + "22", border: `1px solid ${mainQual.color}44`, borderRadius: "8px", padding: "5px 12px", fontSize: "12px", fontWeight: "700", color: mainQual.color, fontFamily: FONT_JP }, children: mainQual.name })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { style: { padding: "14px 14px", paddingBottom: "calc(80px + env(safe-area-inset-bottom))", WebkitOverflowScrolling: "touch" }, children: [
+        activeTab === "dashboard" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DashboardTab, { studyLogs, materials, qualifications, mainQualId, onSetMain: setMainQualId }),
+        activeTab === "timer" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TimerTab, { qualifications, materials, onLogFromTimer: addLog }),
+        activeTab === "record" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RecordTab, { materials, qualifications, onAdd: addLog }),
+        activeTab === "history" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HistoryTab, { studyLogs, materials, qualifications, onDelete: delLog }),
+        activeTab === "charts" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChartsTab, { studyLogs, materials, qualifications }),
+        activeTab === "materials" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MaterialsTab, { materials, qualifications, onAdd: addMaterial, onDelete: delMaterial }),
+        activeTab === "settings" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SettingsTab, { qualifications, onUpdateQuals: setQualifications })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { style: { position: "fixed", bottom: 0, left: 0, right: 0, background: C.bg2, borderTop: `1px solid ${C.border}`, display: "flex", paddingBottom: "env(safe-area-inset-bottom)", zIndex: 30 }, children: TABS.map(({ id, label, Icon }) => {
+        const isActive = id === "more" ? isSubPage || sheetOpen : activeTab === id;
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "button",
+          {
+            onClick: () => {
+              if (id === "more") {
+                setSheetOpen((p) => !p);
+              } else {
+                setActiveTab(id);
+                setSheetOpen(false);
+              }
+            },
+            style: { ...base, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "10px 4px", border: "none", background: "none", cursor: "pointer", color: isActive ? C.cyan : C.textMuted, minHeight: "58px", position: "relative", transition: "color 0.15s" },
+            children: [
+              isActive && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { position: "absolute", top: 0, left: "25%", right: "25%", height: "2px", background: C.cyan, borderRadius: "0 0 2px 2px", boxShadow: `0 0 8px ${C.cyan}` } }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { padding: "4px 10px", borderRadius: "10px", background: isActive ? C.cyanGlow : "transparent", transition: "background 0.15s", display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 22, strokeWidth: isActive ? 2 : 1.5 }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: { fontSize: "10px", fontWeight: isActive ? "700" : "400", marginTop: "2px", letterSpacing: "0.02em", fontFamily: FONT_JP }, children: label })
+            ]
+          },
+          id
+        );
+      }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BottomSheet, { open: sheetOpen, onClose: () => setSheetOpen(false), onNavigate: (id) => {
+        setActiveTab(id);
+        setSheetOpen(false);
+      } })
+    ] });
+  }
+  var container = document.getElementById("root");
+  var root = ReactDOM.createRoot(container);
+  root.render(React.createElement(App));
+  return __toCommonJS(app_esbuild_exports);
+})();
+/*! Bundled license information:
+
+react/cjs/react.development.js:
+  (**
+   * @license React
+   * react.development.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react/cjs/react-jsx-runtime.development.js:
+  (**
+   * @license React
+   * react-jsx-runtime.development.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+*/
+
+  </script>
+</body>
+</html>
